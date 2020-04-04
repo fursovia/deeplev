@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import Dict, Optional
 import csv
 
 import numpy as np
@@ -6,7 +6,7 @@ from allennlp.data import Instance
 from allennlp.data.fields import TextField, Field, ArrayField
 from allennlp.data.dataset_readers import DatasetReader
 from allennlp.data.token_indexers import SingleIdTokenIndexer
-from allennlp.data.tokenizers import Token, Tokenizer
+from allennlp.data.tokenizers import CharacterTokenizer
 from allennlp.common.file_utils import cached_path
 from allennlp.common.util import START_SYMBOL, END_SYMBOL
 
@@ -15,15 +15,10 @@ def _get_default_indexer() -> SingleIdTokenIndexer:
     return SingleIdTokenIndexer(namespace='tokens', start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
 
 
-class WhitespaceTokenizer(Tokenizer):
-    def tokenize(self, text: str) -> List[Token]:
-        return [Token(t) for t in text.split()]
-
-
 class LevenshteinReader(DatasetReader):
     def __init__(self, lazy: bool = False):
         super().__init__(lazy)
-        self._tokenizer = WhitespaceTokenizer()
+        self._tokenizer = CharacterTokenizer()
 
     def _read(self, file_path):
         with open(cached_path(file_path), "r") as data_file:
