@@ -35,7 +35,6 @@ class DeepLevenshtein(Model):
         self.attention = attention
 
         self._loss = torch.nn.L1Loss()
-        self._cosine_sim = torch.nn.CosineSimilarity()
 
     def prepare_attended_input(
             self,
@@ -51,7 +50,7 @@ class DeepLevenshtein(Model):
         attented_seq = torch.cat((seq_attention_from['vector'], attended_input), -1)
         return attented_seq
 
-    def calculate_similarity(
+    def calculate_euclidian_distance(
             self,
             embedded_sequence_a: Dict[str, torch.Tensor],
             embedded_sequence_b: Dict[str, torch.Tensor]
@@ -62,8 +61,7 @@ class DeepLevenshtein(Model):
         else:
             vector_a = embedded_sequence_a['vector']
             vector_b = embedded_sequence_b['vector']
-
-        return 0.5 * (self._cosine_sim(vector_a, vector_b) + 1.0)
+        return torch.pairwise_distance(vector_a, vector_b, p=2.0)
 
     def encode_sequence(self, sequence: Dict[str, torch.LongTensor]) -> Dict[str, torch.Tensor]:
         embedded_sequence = self.text_field_embedder(sequence)
@@ -76,15 +74,15 @@ class DeepLevenshtein(Model):
     def forward(self,
                 sequence_a: Dict[str, torch.LongTensor],
                 sequence_b: Dict[str, torch.LongTensor],
-                similarity: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
+                distance: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
         embedded_sequence_a = self.encode_sequence(sequence_a)
         embedded_sequence_b = self.encode_sequence(sequence_b)
 
-        cosine_similarity_normalized = self.calculate_similarity(embedded_sequence_a, embedded_sequence_b)
-        output_dict = {'normalized_cosine': cosine_similarity_normalized}
+        euclidian_distance = self.calculate_euclidian_distance(embedded_sequence_a, embedded_sequence_b)
+        output_dict = {'euclidian_distance': euclidian_distance}
 
-        if similarity is not None:
-            loss = self._loss(cosine_similarity_normalized, similarity.view(-1))
+        if distance is not None:
+            loss = self._loss(euclidian_distance, distance.view(-1))
             output_dict["loss"] = loss
 
         return output_dict
