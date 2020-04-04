@@ -11,7 +11,8 @@
 
 ```bash
 PYTHONPATH=. python scripts/create_dataset.py \
-    --csv_path data/dblp/dataset.csv \
+    --csv_path data/dblp/DBLP.csv \
+    --col_name Title \
     --output_dir data/dblp/
 ```
 

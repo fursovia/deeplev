@@ -12,6 +12,7 @@ from deeplev.typo_generator import generate_default_typo
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--csv_path', type=str, required=True)
+parser.add_argument('--col_name', type=str, required=True)
 parser.add_argument('--output_dir', type=str, required=True)
 parser.add_argument('--num_dissimilar', type=int, default=300000)
 parser.add_argument('--num_similar', type=int, default=700000)
@@ -28,7 +29,7 @@ if __name__ == '__main__':
 
     data = pd.read_csv(args.csv_path)
     # TODO: drop zero-len examples
-    sequences = data['sequences'].astype(str).tolist()
+    sequences = data[args.col_name].dropna().astype(str).tolist()
     sequences = list(map(clean_sequence, sequences))
     vocab = list(set(''.join(sequences)))
 
