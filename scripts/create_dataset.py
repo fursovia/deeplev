@@ -27,7 +27,8 @@ if __name__ == '__main__':
     assert not train_path.exists() and not test_path.exists()
 
     data = pd.read_csv(args.csv_path)
-    sequences = data['sequences'].tolist()
+    # TODO: drop zero-len examples
+    sequences = data['sequences'].astype(str).tolist()
     sequences = list(map(clean_sequence, sequences))
     vocab = list(set(''.join(sequences)))
 
