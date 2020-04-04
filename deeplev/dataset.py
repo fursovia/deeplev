@@ -11,9 +11,6 @@ from allennlp.common.file_utils import cached_path
 from allennlp.common.util import START_SYMBOL, END_SYMBOL
 
 
-IDENTITY_TOKEN = 'Identity'
-
-
 def _get_default_indexer() -> SingleIdTokenIndexer:
     return SingleIdTokenIndexer(namespace='tokens', start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
 
@@ -61,7 +58,7 @@ class LevenshteinReader(DatasetReader):
 
         if similarity is not None:
             # TODO: fix this hack
-            fields["similarity"] = ArrayField(
+            fields["distance"] = ArrayField(
                 array=np.array([similarity])
             )
 
