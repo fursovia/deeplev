@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 
-from deeplev.utils import edit_distance
+from deeplev.utils import edit_distance, clean_sequence
 from deeplev.typo_generator import generate_default_typo
 
 
@@ -28,6 +28,7 @@ if __name__ == '__main__':
 
     data = pd.read_csv(args.csv_path)
     sequences = data['sequences'].tolist()
+    sequences = list(map(clean_sequence, sequences))
     vocab = list(set(''.join(sequences)))
 
     dissimilar_examples = []
