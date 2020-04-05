@@ -95,7 +95,7 @@ def get_deep_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
     )
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
     lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMB_DIM, HID_DIM, batch_first=True, bidirectional=True))
-    body = BagOfEmbeddingsEncoder(embedding_dim=HID_DIM, averaged=True)
+    body = BagOfEmbeddingsEncoder(embedding_dim=HID_DIM * 2, averaged=True)
 
     model = DeepLevenshtein(
         vocab=vocab,
@@ -114,7 +114,7 @@ def get_deep_levenshtein_attention(vocab: Vocabulary) -> DeepLevenshtein:
     )
     word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
     lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMB_DIM, HID_DIM, batch_first=True, bidirectional=True))
-    body = BagOfEmbeddingsEncoder(embedding_dim=HID_DIM, averaged=True)
+    body = BagOfEmbeddingsEncoder(embedding_dim=HID_DIM * 2, averaged=True)
     attention = AdditiveAttention(vector_dim=body.get_output_dim(), matrix_dim=HID_DIM * 2)
 
     model = DeepLevenshtein(
