@@ -22,8 +22,18 @@ PYTHONPATH=. python scripts/create_dataset.py \
 
 # Metrics
 
+How to start the training
+
+```bash
+python train.py \
+    --cuda 0 \
+    --model_dir experiments/my_experiment \
+    --data_dir data/dblp/
+```
+
+
 L1 error on the validation set
 
-| Dataset\Model Name 	|   LSTM  	| LSTM+Att 	| CNN 	|
-|--------------------	|:-------:	|:--------:	|:---:	|
-| Chunk of DBLP Dataset | 41.7181 	|  34.6942 	|  ?  	|
+| Dataset\Model Name 	| Emb + LSTM |Emb + LSTM+Att| One-Hot + CNN |
+|--------------------	|:----------:|:--------:	|:---------:	|
+| Chunk of DBLP Dataset | 41.7181 	 |  34.6942 	|  ?         	|
