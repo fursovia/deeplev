@@ -172,3 +172,28 @@ def get_emb_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
         seq2vec_encoder=body_encoder
     )
     return model
+
+
+def get_emb_cnn_attention_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
+    token_encoder = Embedding(
+        num_embeddings=vocab.get_vocab_size('tokens'),
+        embedding_dim=EMB_DIM
+    )
+    token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
+    body_encoder = CnnEncoder(
+        embedding_dim=token_encoder.get_output_dim(),
+        num_filters=8,
+        ngram_filter_sizes=(3, 4, 5, 7)
+    )
+    attention = AdditiveAttention(
+        vector_dim=body_encoder.get_output_dim(),
+        matrix_dim=body_encoder.get_output_dim()
+    )
+
+    model = DeepLevenshtein(
+        vocab=vocab,
+        text_field_embedder=token_embeddings,
+        seq2vec_encoder=body_encoder,
+        attention=attention
+    )
+    return model
