@@ -16,12 +16,9 @@ class OnehotEncoder(TokenEmbedder):
     def _one_hot(self, tensor: torch.Tensor) -> torch.Tensor:
         return torch.nn.functional.one_hot(tensor, self._vocab_size)
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        num_tokens = inputs.size(1)
-        one_hot_labels = self._one_hot(inputs)
-        if num_tokens >= self._max_seq_length:
-            return one_hot_labels[:, :self._max_seq_length, :]
-
+    def forward(self, tokens: torch.Tensor) -> torch.Tensor:
+        num_tokens = tokens.size(1)
+        one_hot_labels = self._one_hot(tokens)
         pad_length = self._max_seq_length - num_tokens
         one_hot_labels = torch.nn.functional.pad(
             one_hot_labels,
