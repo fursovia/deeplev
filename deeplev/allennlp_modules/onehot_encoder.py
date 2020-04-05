@@ -3,7 +3,8 @@ import torch
 from allennlp.modules.token_embedders import TokenEmbedder
 
 
-class OnehotEmbedder(TokenEmbedder):
+@TokenEmbedder.register("onehot_encoder")
+class OnehotEncoder(TokenEmbedder):
     def __init__(self, vocab_size: int, max_seq_length: int) -> None:
         super().__init__()
         self._vocab_size = vocab_size
