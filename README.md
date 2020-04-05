@@ -34,6 +34,6 @@ python train.py \
 
 L1 error on the validation set
 
-| Dataset\Model Name 	| Emb + LSTM |Emb + LSTM+Att| One-Hot + CNN |
-|--------------------	|:----------:|:--------:	|:---------:	|
-| Chunk of DBLP Dataset | 41.7181 	 |  34.6942 	|  ?         	|
+| Dataset\Model Name 	| Emb + LSTM |Emb + LSTM+Att| One-Hot + CNN | Emb + CNN |
+|--------------------	|:----------:|:--------:	|:---------:	|:---------:| 
+| Chunk of DBLP Dataset | 41.7181 	 |  34.6942 	|  12.5000     	|  10.9000  |

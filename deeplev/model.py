@@ -2,17 +2,14 @@ from typing import Dict, Optional
 
 import torch
 
+from allennlp.nn import util
 from allennlp.data import Vocabulary
 from allennlp.models.model import Model
-from allennlp.modules import Seq2VecEncoder, TextFieldEmbedder, Seq2SeqEncoder
-from allennlp.nn import util
 from allennlp.modules import Embedding
-from allennlp.modules.seq2seq_encoders import PytorchSeq2SeqWrapper
-from allennlp.modules.seq2vec_encoders import BagOfEmbeddingsEncoder
-from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
-from allennlp.modules.attention import AdditiveAttention
-from allennlp.modules import Attention
-from allennlp.modules.seq2vec_encoders import CnnEncoder
+from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder, PytorchSeq2SeqWrapper
+from allennlp.modules.seq2vec_encoders import Seq2VecEncoder, BagOfEmbeddingsEncoder, CnnEncoder
+from allennlp.modules.text_field_embedders import TextFieldEmbedder, BasicTextFieldEmbedder
+from allennlp.modules.attention import Attention, AdditiveAttention
 
 from deeplev.allennlp_modules.onehot_encoder import OnehotEncoder
 
