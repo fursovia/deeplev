@@ -12,7 +12,9 @@ from allennlp.modules.seq2vec_encoders import BagOfEmbeddingsEncoder
 from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
 from allennlp.modules.attention import AdditiveAttention
 from allennlp.modules import Attention
+from allennlp.modules.seq2vec_encoders import CnnEncoder
 
+from deeplev.allennlp_modules.onehot_encoder import OnehotEncoder
 
 EMB_DIM = 64
 HID_DIM = 32
@@ -132,5 +134,26 @@ def get_deep_levenshtein_attention(vocab: Vocabulary) -> DeepLevenshtein:
         seq2seq_encoder=lstm,
         seq2vec_encoder=body,
         attention=attention
+    )
+    return model
+
+
+def get_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
+    # TODO: should be able to pass max length
+    token_encoder = OnehotEncoder(
+        vocab_size=vocab.get_vocab_size("tokens"),
+        max_seq_length=300
+    )
+    token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
+    body_encoder = CnnEncoder(
+        embedding_dim=token_encoder.get_output_dim(),
+        num_filters=8,
+        ngram_filter_sizes=(3, 4, 5, 7)
+    )
+
+    model = DeepLevenshtein(
+        vocab=vocab,
+        text_field_embedder=token_embeddings,
+        seq2vec_encoder=body_encoder
     )
     return model
