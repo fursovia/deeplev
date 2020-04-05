@@ -139,10 +139,8 @@ def get_deep_levenshtein_attention(vocab: Vocabulary) -> DeepLevenshtein:
 
 
 def get_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
-    # TODO: should be able to pass max length
     token_encoder = OnehotEncoder(
-        vocab_size=vocab.get_vocab_size("tokens"),
-        max_seq_length=300
+        vocab_size=vocab.get_vocab_size("tokens")
     )
     token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
     body_encoder = CnnEncoder(
