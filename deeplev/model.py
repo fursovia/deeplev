@@ -187,7 +187,7 @@ def get_emb_cnn_attention_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
     )
     attention = AdditiveAttention(
         vector_dim=body_encoder.get_output_dim(),
-        matrix_dim=body_encoder.get_output_dim()
+        matrix_dim=token_encoder.get_output_dim()
     )
 
     model = DeepLevenshtein(
