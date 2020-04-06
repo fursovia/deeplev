@@ -26,7 +26,7 @@ class LevenshteinReader(DatasetReader):
             next(tsv_in, None)
             for row in tsv_in:
                 if len(row) == 3:
-                    yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1], similarity=row[2])
+                    yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1], distance=row[2])
                 else:
                     yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1])
 
@@ -34,7 +34,7 @@ class LevenshteinReader(DatasetReader):
         self,
         sequence_a: str,
         sequence_b: str,
-        similarity: Optional[float] = None
+        distance: Optional[float] = None
     ) -> Instance:
         fields: Dict[str, Field] = dict()
         fields["sequence_a"] = TextField(
@@ -51,10 +51,10 @@ class LevenshteinReader(DatasetReader):
             }
         )
 
-        if similarity is not None:
+        if distance is not None:
             # TODO: fix this hack
             fields["distance"] = ArrayField(
-                array=np.array([similarity])
+                array=np.array([distance])
             )
 
         return Instance(fields)

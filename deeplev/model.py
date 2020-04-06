@@ -135,16 +135,20 @@ def get_deep_levenshtein_attention(vocab: Vocabulary) -> DeepLevenshtein:
     return model
 
 
+def _get_default_cnn_encoder(embedding_dim: int) -> CnnEncoder:
+    return CnnEncoder(
+        embedding_dim=embedding_dim,
+        num_filters=8,
+        ngram_filter_sizes=(3, 4, 5, 7)
+    )
+
+
 def get_onehot_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
     token_encoder = OnehotEncoder(
         vocab_size=vocab.get_vocab_size("tokens")
     )
     token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    body_encoder = CnnEncoder(
-        embedding_dim=token_encoder.get_output_dim(),
-        num_filters=8,
-        ngram_filter_sizes=(3, 4, 5, 7)
-    )
+    body_encoder = _get_default_cnn_encoder(token_encoder.get_output_dim())
 
     model = DeepLevenshtein(
         vocab=vocab,
@@ -160,11 +164,7 @@ def get_emb_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
         embedding_dim=EMB_DIM
     )
     token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    body_encoder = CnnEncoder(
-        embedding_dim=token_encoder.get_output_dim(),
-        num_filters=8,
-        ngram_filter_sizes=(3, 4, 5, 7)
-    )
+    body_encoder = _get_default_cnn_encoder(token_encoder.get_output_dim())
 
     model = DeepLevenshtein(
         vocab=vocab,
@@ -180,11 +180,7 @@ def get_emb_cnn_attention_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
         embedding_dim=EMB_DIM
     )
     token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    body_encoder = CnnEncoder(
-        embedding_dim=token_encoder.get_output_dim(),
-        num_filters=8,
-        ngram_filter_sizes=(3, 4, 5, 7)
-    )
+    body_encoder = _get_default_cnn_encoder(token_encoder.get_output_dim())
     attention = AdditiveAttention(
         vector_dim=body_encoder.get_output_dim(),
         matrix_dim=token_encoder.get_output_dim()

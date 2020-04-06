@@ -28,8 +28,9 @@ if __name__ == '__main__':
     assert not train_path.exists() and not test_path.exists()
 
     data = pd.read_csv(args.csv_path)
+    data = data[~data[args.col_name].isna()]
     # TODO: drop zero-len examples
-    sequences = data[args.col_name].dropna().astype(str).tolist()
+    sequences = data[args.col_name].astype(str).tolist()
     sequences = list(map(clean_sequence, sequences))
     vocab = list(set(''.join(sequences)))
 
