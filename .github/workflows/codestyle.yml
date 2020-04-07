@@ -31,3 +31,23 @@ jobs:
         PYTHONPATH=. python scripts/verify.py --checks black
     - name: Test with pytest
       run: PYTHONPATH=. python scripts/verify.py --checks pytest
+    - name: Download test dataset
+      run: |
+        mkdir -p ./data/test
+        download-gdrive 18bZdW3nVn_fa6dVmSMGlLMXx6dPy6_cb test_data.zip
+        unzip -qqo test_data.zip -d ./data/test
+    - name: Create dataset
+      run: PYTHONPATH=. python scripts/create_dataset.py \
+          --csv_path ./data/test/test.csv \
+          --col_name comment_text \
+          --output_dir ./data/test/ \
+          --num_dissimilar 5000 \
+          --num_similar 5000 \
+          --test_size 0.2
+    - name: Check pipeline
+      run: python train.py \
+        --model_dir ./experiment \
+        --data_dir ./data/test \
+        --num_epochs 2 \
+        --batch_size 64 \
+        --patience 1
