@@ -1,4 +1,5 @@
 import functools
+import re
 
 import torch
 from allennlp.models import Model
@@ -11,16 +12,12 @@ def load_weights(model: Model, path: str, location: str = 'cpu') -> None:
 
 
 @functools.lru_cache(maxsize=500)
-def calculate_wer(sequence_a: str, sequence_b: str) -> float:
-    # taken from https://github.com/SeanNaren/deepspeech.pytorch/blob/master/decoder.py
-    b = set(sequence_a.split() + sequence_b.split())
-    word2char = dict(zip(b, range(len(b))))
-
-    w1 = [chr(word2char[w]) for w in sequence_a.split()]
-    w2 = [chr(word2char[w]) for w in sequence_b.split()]
-
-    return lvs.distance(''.join(w1), ''.join(w2))
+def edit_distance(sequence_a: str, sequence_b: str) -> float:
+    return lvs.distance(sequence_a, sequence_b)
 
 
-def calculate_normalized_wer(sequence_a: str, sequence_b: str) -> float:
-    return calculate_wer(sequence_a, sequence_b) / max(len(sequence_a.split()), len(sequence_b.split()))
+def clean_sequence(sequence: str) -> str:
+    sequence = sequence.lower()
+    sequence = re.sub(r"[^\w0-9 ]+", "", sequence)
+    sequence = re.sub("\s\s+", " ", sequence).strip()
+    return sequence
