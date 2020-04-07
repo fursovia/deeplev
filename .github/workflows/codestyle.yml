@@ -34,13 +34,13 @@ jobs:
     - name: Download test dataset
       run: |
         mkdir -p ./data/test
-        wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=18bZdW3nVn_fa6dVmSMGlLMXx6dPy6_cb' \
+        wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=15kc2hriGKkv1hDushTzYmpRD05AK6qLk' \
           -O test_data.zip
         unzip -qqo test_data.zip -d ./data/test
     - name: Create dataset
       run: |
         PYTHONPATH=. python scripts/create_dataset.py \
-          --csv_path ./data/test/test.csv \
+          --csv_path ./data/test/data.csv \
           --col_name comment_text \
           --output_dir ./data/test/ \
           --num_dissimilar 5000 \
