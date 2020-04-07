@@ -38,7 +38,8 @@ jobs:
           -O test_data.zip
         unzip -qqo test_data.zip -d ./data/test
     - name: Create dataset
-      run: PYTHONPATH=. python scripts/create_dataset.py \
+      run: |
+        PYTHONPATH=. python scripts/create_dataset.py \
           --csv_path ./data/test/test.csv \
           --col_name comment_text \
           --output_dir ./data/test/ \
@@ -46,9 +47,10 @@ jobs:
           --num_similar 5000 \
           --test_size 0.2
     - name: Check pipeline
-      run: python train.py \
-        --model_dir ./experiment \
-        --data_dir ./data/test \
-        --num_epochs 2 \
-        --batch_size 64 \
-        --patience 1
+      run: |
+        python train.py \
+          --model_dir ./experiment \
+          --data_dir ./data/test \
+          --num_epochs 2 \
+          --batch_size 64 \
+          --patience 1
