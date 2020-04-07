@@ -1,7 +1,6 @@
 from typing import Optional
 
 import torch
-
 from allennlp.modules.token_embedders import TokenEmbedder
 
 
@@ -24,7 +23,6 @@ class OnehotEncoder(TokenEmbedder):
         if self._max_seq_length is not None:
             pad_length = self._max_seq_length - num_tokens
             one_hot_labels = torch.nn.functional.pad(
-                one_hot_labels,
-                pad=[0, 0, 0, pad_length]
+                one_hot_labels, pad=[0, 0, 0, pad_length]
             )
         return one_hot_labels
