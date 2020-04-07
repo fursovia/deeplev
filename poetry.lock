@@ -700,6 +700,17 @@ six = ">=1.5"
 
 [[package]]
 category = "main"
+description = "Python extension for computing string edit distances and similarities."
+name = "python-levenshtein"
+optional = false
+python-versions = "*"
+version = "0.12.0"
+
+[package.dependencies]
+setuptools = "*"
+
+[[package]]
+category = "main"
 description = "PyTorch version of Google AI BERT model with script to load Google pre-trained models"
 name = "pytorch-pretrained-bert"
 optional = false
@@ -1073,7 +1084,7 @@ python-versions = ">=3.6"
 version = "3.1.0"
 
 [metadata]
-content-hash = "11c367593956a4fd8d34f13af7618e792683e68fab101a28023891cb0d9e8158"
+content-hash = "0d121140d772020ac8a113c6b08c052d99884bd45d13c7f5d38713a5f10b6001"
 python-versions = "^3.6.1"
 
 [metadata.hashes]
@@ -1143,6 +1154,7 @@ pygments = ["647344a061c249a3b74e230c739f434d7ea4d8b1d5f3721bc0f3558049b38f44", 
 pyparsing = ["c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1", "ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"]
 pytest = ["63344a2e3bce2e4d522fd62b4fdebb647c019f1f9e4ca075debbd13219db4418", "f67403f33b2b1d25a6756184077394167fe5e2f9d8bdaab30707d19ccec35427"]
 python-dateutil = ["73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c", "75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"]
+python-levenshtein = ["033a11de5e3d19ea25c9302d11224e1a1898fe5abd23c61c7c360c25195e3eb1"]
 pytorch-pretrained-bert = ["9cf7c6221e854071b9844f2a9a581e05a24777351618c010493d9c76601c6747", "ddd86f2f4ca595a2ad05d48c35d4f5c1c5f150bef79d56e3159701840a574d06", "edf4f9c2e64ef4e3cc68a335c88938fa45c17f18300952c64ba59fa66580f2f4"]
 pytorch-transformers = ["cd670284de1b1b0bfe2f4a27531e873b5a76cd163960661971a340f33c3f4290", "f1eadbd394564c0dbe0e12e3ebb5b1470169af275c2a71e20c2480ee5a93e94c"]
 pytz = ["1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d", "b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"]
