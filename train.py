@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from itertools import chain
 
 import torch
 import torch.optim as optim
@@ -24,13 +25,14 @@ parser.add_argument('--learning_rate', type=float, default=0.001)
 parser.add_argument('--patience', type=int, default=2,
                     help='Number of epochs to be patient before early stopping')
 parser.add_argument('--resume', action='store_true')
+parser.add_argument('--lazy', action='store_true')
 
 
 if __name__ == '__main__':
     args = parser.parse_args()
     data_path = Path(args.data_dir)
 
-    reader = LevenshteinReader()
+    reader = LevenshteinReader(lazy=args.lazy)
     train_dataset = reader.read(data_path / 'train.csv')
     test_dataset = reader.read(data_path / 'test.csv')
 
@@ -42,7 +44,7 @@ if __name__ == '__main__':
         vocab = Vocabulary.from_files(model_dir / "vocab")
     else:
         vocab = Vocabulary.from_instances(
-            train_dataset + test_dataset,
+            chain(train_dataset, test_dataset),
             tokens_to_add={'tokens': [START_SYMBOL, END_SYMBOL]}
         )
         vocab.save_to_files(model_dir / "vocab")
