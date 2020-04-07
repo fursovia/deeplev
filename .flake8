@@ -13,3 +13,7 @@ per-file-ignores =
     # scripts don't have to respect
     #  E402: imports not at top of file (because we mess with sys.path)
     scripts/**:E402
+
+inline-quotes = double
+multiline-quotes = double
+docstring-quotes = double
