@@ -45,7 +45,8 @@ if __name__ == '__main__':
         positive_distance = edit_distance(random_text, positive)
         negative_distance = edit_distance(random_text, negative)
 
-        examples.append((random_text, positive, negative, positive_distance, negative_distance))
+        if positive_distance > negative_distance:
+            examples.append((random_text, positive, negative, positive_distance, negative_distance))
 
     examples = pd.DataFrame(examples, columns=['anchor', 'positive', 'negative', 'positive_distance', 'negative_distance'])
 
