@@ -8,3 +8,4 @@ check-codestyle:
 	python3 scripts/verify.py --checks flake8
 	python3 scripts/verify.py --checks mypy
 	python3 scripts/verify.py --checks black
+	python3 scripts/verify.py --checks pytest
