@@ -79,19 +79,29 @@ class DeepLevenshtein(Model):
             'matrix': embedded_sequence
         }
 
-    def forward(self,
-                sequence_a: Dict[str, torch.LongTensor],
-                sequence_b: Dict[str, torch.LongTensor],
-                distance: Optional[torch.Tensor] = None) -> Dict[str, torch.Tensor]:
-        embedded_sequence_a = self.encode_sequence(sequence_a)
-        embedded_sequence_b = self.encode_sequence(sequence_b)
+    def forward(
+        self,
+        anchor: Dict[str, torch.LongTensor],
+        positive: Dict[str, torch.LongTensor],
+        negative: Dict[str, torch.LongTensor],
+        positive_distance: torch.Tensor,
+        negative_distance: torch.Tensor
+    ) -> Dict[str, torch.Tensor]:
+        embedded_anchor = self.encode_sequence(anchor)
+        embedded_positive = self.encode_sequence(positive)
+        embedded_negative = self.encode_sequence(negative)
 
-        euclidian_distance = self.calculate_euclidian_distance(embedded_sequence_a, embedded_sequence_b)
-        output_dict = {'euclidian_distance': euclidian_distance}
+        euclid_positive_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_positive)
+        euclid_negative_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_negative)
+        output_dict = {
+            'euclidian_pos': euclid_positive_distance,
+            'euclidian_neg': euclid_negative_distance
+        }
 
-        if distance is not None:
-            loss = self._loss(euclidian_distance, distance.view(-1))
-            output_dict["loss"] = loss
+        positive_loss = self._loss(euclid_positive_distance, positive_distance.view(-1))
+        negative_loss = self._loss(euclid_negative_distance, negative_distance.view(-1))
+        loss = positive_loss + negative_loss
+        output_dict["loss"] = loss
 
         return output_dict
 
