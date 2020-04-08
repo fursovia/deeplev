@@ -1,7 +1,9 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, Union, Iterator
 import csv
 
 import numpy as np
+import pandas as pd
+from pathlib import Path
 from allennlp.data import Instance
 from allennlp.data.fields import TextField, Field, ArrayField
 from allennlp.data.dataset_readers import DatasetReader
@@ -16,45 +18,53 @@ def _get_default_indexer() -> SingleIdTokenIndexer:
 
 
 class LevenshteinReader(DatasetReader):
-    def __init__(self, lazy: bool = False):
+    def __init__(self, lazy: bool = False) -> None:
         super().__init__(lazy)
         self._tokenizer = CharacterTokenizer()
 
-    def _read(self, file_path):
-        with open(cached_path(file_path), "r") as data_file:
-            tsv_in = csv.reader(data_file, delimiter=',')
-            next(tsv_in, None)
-            for row in tsv_in:
-                if len(row) == 3:
-                    yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1], distance=row[2])
-                else:
-                    yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1])
+    def _read(self, file_path: Union[str, Path]) -> Iterator[Instance]:
+        for row in pd.read_csv(file_path, chunksize=1):
+            yield self.text_to_instance(
+                anchor=row.anchor.squeeze(),
+                positive=row.positive.squeeze(),
+                negative=row.negative.squeeze(),
+                positive_distance=row.positive_distance.squeeze(),
+                negative_distance=row.negative_distance.squeeze()
+            )
 
     def text_to_instance(
         self,
-        sequence_a: str,
-        sequence_b: str,
-        distance: Optional[float] = None
+        anchor: str,
+        positive: str,
+        negative: str,
+        positive_distance: float,
+        negative_distance: float
     ) -> Instance:
         fields: Dict[str, Field] = dict()
-        fields["sequence_a"] = TextField(
-            self._tokenizer.tokenize(sequence_a),
+
+        fields["anchor"] = TextField(
+            self._tokenizer.tokenize(anchor),
             {
                 "tokens": _get_default_indexer()
             }
         )
-
-        fields["sequence_b"] = TextField(
-            self._tokenizer.tokenize(sequence_b),
+        fields["positive"] = TextField(
+            self._tokenizer.tokenize(positive),
             {
                 "tokens": _get_default_indexer()
             }
         )
-
-        if distance is not None:
-            # TODO: fix this hack
-            fields["distance"] = ArrayField(
-                array=np.array([distance])
-            )
+        fields["negative"] = TextField(
+            self._tokenizer.tokenize(negative),
+            {
+                "tokens": _get_default_indexer()
+            }
+        )
+        fields["positive_distance"] = ArrayField(
+            array=np.array([positive_distance])
+        )
+        fields["negative_distance"] = ArrayField(
+            array=np.array([negative_distance])
+        )
 
         return Instance(fields)
