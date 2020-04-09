@@ -11,10 +11,16 @@ from allennlp.training.metrics.metric import Metric
 
 @Metric.register("recall_at_k")
 class RecallAtK(Metric):
-    def __init__(self, top_k):
-        if top_k <= 0:
-            raise ConfigurationError("top_k passed to Recall at K must be > 0")
-        self._top_k = top_k
+    def __init__(self, lower_k: Optional[int] = None, upper_k: int = 1):
+        if upper_k <= 0:
+            raise ConfigurationError("upper_k passed to Recall at K must be > 0")
+        if lower_k is None:
+            lower_k = upper_k
+        elif upper_k < lower_k:
+            raise ConfigurationError("upper_k passed to Recall at K must be >= lower_k")
+
+        self._lower_k = lower_k
+        self._upper_k = upper_k
     
     @overrides
     def __call__(
@@ -25,11 +31,11 @@ class RecallAtK(Metric):
     ):
         if mask is None:
             mask = torch.ones(targets.shape[0]).bool()
-        
-        predictions, targets, mask = self.detach_tensors(predictions[:, :self._top_k], targets[:, :self._top_k], mask)
-        
-        self._recall = torch.tensor([np.intersect1d(x, y).shape[0] / len(x) for x, y in zip(predictions, targets)])
-        self._recall *= mask
+
+        predictions, targets, mask = self.detach_tensors(predictions, targets, mask)
+
+        self._recall = [_recall_at_k(predictions, targets, k) for k in range(self._lower_k, self._upper_k + 1)]       
+        self._recall = (torch.Tensor(self._recall) * mask).T
 
     @overrides
     def get_metric(self, reset: bool = False):
@@ -40,7 +46,8 @@ class RecallAtK(Metric):
     
     @overrides
     def reset(self):
-        self._top_k = 0
+        self._upper_k = 1
+        self._lower_k = 1
         self._recall = 0.0
 
     @staticmethod
@@ -52,3 +59,7 @@ class RecallAtK(Metric):
         """
         # Check if it's actually a tensor in case something else was passed.
         return (x.detach() if isinstance(x, torch.Tensor) else x for x in tensors)
+
+
+def _recall_at_k(sequence_a: torch.Tensor, sequence_b: torch.Tensor, k: int):
+    return [np.intersect1d(x, y).shape[0] / len(x) for x, y in zip(sequence_a[:, :k], sequence_b[:, :k])]
