@@ -32,7 +32,7 @@ class RecallAtK(Metric):
         if mask is None:
             mask = torch.ones(targets.shape[0]).bool()
 
-        predictions, targets, mask = self.detach_tensors(predictions, targets, mask)
+        predictions, targets, mask = self.unwrap_to_tensors(predictions, targets, mask)
 
         self._recall = [_recall_at_k(predictions, targets, k) for k in range(self._lower_k, self._upper_k + 1)]       
         self._recall = (torch.Tensor(self._recall) * mask).T
@@ -49,16 +49,6 @@ class RecallAtK(Metric):
         self._upper_k = 1
         self._lower_k = 1
         self._recall = 0.0
-
-    @staticmethod
-    def detach_tensors(*tensors: torch.Tensor) -> Iterable[torch.Tensor]:
-        """
-        If you actually passed gradient-tracking Tensors to a Metric, there will be
-        a huge memory leak, because it will prevent garbage collection for the computation
-        graph. This method ensures the tensors are detached.
-        """
-        # Check if it's actually a tensor in case something else was passed.
-        return (x.detach() if isinstance(x, torch.Tensor) else x for x in tensors)
 
 
 def _recall_at_k(predictions: torch.Tensor, targets: torch.Tensor, k: int):
