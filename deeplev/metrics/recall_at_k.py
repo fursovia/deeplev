@@ -61,5 +61,5 @@ class RecallAtK(Metric):
         return (x.detach() if isinstance(x, torch.Tensor) else x for x in tensors)
 
 
-def _recall_at_k(sequence_a: torch.Tensor, sequence_b: torch.Tensor, k: int):
-    return [np.intersect1d(x, y).shape[0] / len(x) for x, y in zip(sequence_a[:, :k], sequence_b[:, :k])]
+def _recall_at_k(predictions: torch.Tensor, targets: torch.Tensor, k: int):
+    return [np.intersect1d(x, y).shape[0] / len(x) for x, y in zip(predictions[:, :k], targets[:, :k])]
