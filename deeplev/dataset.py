@@ -12,9 +12,7 @@ from allennlp.data.tokenizers import CharacterTokenizer
 
 
 def _get_default_indexer() -> SingleIdTokenIndexer:
-    return SingleIdTokenIndexer(
-        namespace="tokens", start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL]
-    )
+    return SingleIdTokenIndexer(namespace="tokens", start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
 
 
 class LevenshteinReader(DatasetReader):
@@ -28,23 +26,15 @@ class LevenshteinReader(DatasetReader):
             next(tsv_in, None)
             for row in tsv_in:
                 if len(row) == 3:
-                    yield self.text_to_instance(
-                        sequence_a=row[0], sequence_b=row[1], distance=row[2]
-                    )
+                    yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1], distance=row[2])
                 else:
                     yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1])
 
-    def text_to_instance(
-        self, sequence_a: str, sequence_b: str, distance: Optional[float] = None
-    ) -> Instance:
+    def text_to_instance(self, sequence_a: str, sequence_b: str, distance: Optional[float] = None) -> Instance:
         fields: Dict[str, Field] = dict()
-        fields["sequence_a"] = TextField(
-            self._tokenizer.tokenize(sequence_a), {"tokens": _get_default_indexer()}
-        )
+        fields["sequence_a"] = TextField(self._tokenizer.tokenize(sequence_a), {"tokens": _get_default_indexer()})
 
-        fields["sequence_b"] = TextField(
-            self._tokenizer.tokenize(sequence_b), {"tokens": _get_default_indexer()}
-        )
+        fields["sequence_b"] = TextField(self._tokenizer.tokenize(sequence_b), {"tokens": _get_default_indexer()})
 
         if distance is not None:
             # TODO: fix this hack

@@ -18,7 +18,7 @@ mypy = "0.770"
 flake8 = "^3.7.9"
 
 [tool.black]
-line-length = 100
+line-length = 115
 
 include = '\.pyi?$'
 
