@@ -44,11 +44,15 @@ if __name__ == '__main__':
 
         positive_distance = edit_distance(random_text, positive)
         negative_distance = edit_distance(random_text, negative)
+        inbetween_distance = edit_distance(positive, negative)
 
         if positive_distance < negative_distance:
-            examples.append((random_text, positive, negative, positive_distance, negative_distance))
+            examples.append((random_text, positive, negative, positive_distance, negative_distance, inbetween_distance))
 
-    examples = pd.DataFrame(examples, columns=['anchor', 'positive', 'negative', 'positive_distance', 'negative_distance'])
+    examples = pd.DataFrame(
+        examples,
+        columns=['anchor', 'positive', 'negative', 'positive_distance', 'negative_distance', 'inbetween_distance']
+    )
 
     train, test = train_test_split(examples, test_size=args.test_size)
     train.to_csv(train_path, index=False)

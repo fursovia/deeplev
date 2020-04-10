@@ -29,7 +29,8 @@ class LevenshteinReader(DatasetReader):
                 positive=row.positive.squeeze(),
                 negative=row.negative.squeeze(),
                 positive_distance=row.positive_distance.squeeze(),
-                negative_distance=row.negative_distance.squeeze()
+                negative_distance=row.negative_distance.squeeze(),
+                inbetween_distance=row.inbetween_distance.squeeze()
             )
 
     def text_to_instance(
@@ -38,7 +39,8 @@ class LevenshteinReader(DatasetReader):
         positive: str,
         negative: str,
         positive_distance: float,
-        negative_distance: float
+        negative_distance: float,
+        inbetween_distance: float
     ) -> Instance:
         fields: Dict[str, Field] = dict()
 
@@ -65,6 +67,9 @@ class LevenshteinReader(DatasetReader):
         )
         fields["negative_distance"] = ArrayField(
             array=np.array([negative_distance])
+        )
+        fields["inbetween_distance"] = ArrayField(
+            array=np.array([inbetween_distance])
         )
 
         return Instance(fields)

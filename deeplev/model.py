@@ -85,7 +85,8 @@ class DeepLevenshtein(Model):
         positive: Dict[str, torch.LongTensor],
         negative: Dict[str, torch.LongTensor],
         positive_distance: torch.Tensor,
-        negative_distance: torch.Tensor
+        negative_distance: torch.Tensor,
+        inbetween_distance: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
         embedded_anchor = self.encode_sequence(anchor)
         embedded_positive = self.encode_sequence(positive)
@@ -93,14 +94,19 @@ class DeepLevenshtein(Model):
 
         euclid_positive_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_positive)
         euclid_negative_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_negative)
+        euclid_inbetween_distance = self.calculate_euclidian_distance(embedded_positive, embedded_negative)
+
         output_dict = {
             'euclidian_pos': euclid_positive_distance,
-            'euclidian_neg': euclid_negative_distance
+            'euclidian_neg': euclid_negative_distance,
+            'euclidian_inbetween': euclid_inbetween_distance
         }
 
         positive_loss = self._loss(euclid_positive_distance, positive_distance.view(-1))
         negative_loss = self._loss(euclid_negative_distance, negative_distance.view(-1))
-        loss = positive_loss + negative_loss
+        inbetween_loss = self._loss(euclid_inbetween_distance, inbetween_distance.view(-1))
+
+        loss = positive_loss + negative_loss + inbetween_loss
         output_dict["loss"] = loss
 
         return output_dict
