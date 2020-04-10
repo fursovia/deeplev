@@ -37,4 +37,3 @@ L1 error on the validation set
 | Dataset\Model Name 	| Emb + LSTM |Emb + LSTM+Att| One-Hot + CNN | Emb + CNN | Emb + CNN + Att | Emb + Transformer |
 |--------------------	|:----------:|:--------:	|:---------:	|:---------:|:---------------:|:-----------------:|
 | Chunk of DBLP Dataset | 41.7181 	 |  34.6942 	|  12.4882     	|  10.7900  |     9.4315      |  7.6854           |
-
