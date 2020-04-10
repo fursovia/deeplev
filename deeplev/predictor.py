@@ -27,7 +27,5 @@ class DeepLevenshteinPredictor(Predictor):
     ) -> List[Instance]:
         new_instance = deepcopy(instance)
         normalized_cosine = outputs["normalized_cosine"]
-        new_instance.add_field(
-            "similarity", ArrayField(array=np.array([normalized_cosine]))
-        )
+        new_instance.add_field("similarity", ArrayField(array=np.array([normalized_cosine])))
         return [new_instance]

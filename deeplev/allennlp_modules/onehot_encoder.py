@@ -22,7 +22,5 @@ class OnehotEncoder(TokenEmbedder):
         one_hot_labels = self._one_hot(tokens)
         if self._max_seq_length is not None:
             pad_length = self._max_seq_length - num_tokens
-            one_hot_labels = torch.nn.functional.pad(
-                one_hot_labels, pad=[0, 0, 0, pad_length]
-            )
+            one_hot_labels = torch.nn.functional.pad(one_hot_labels, pad=[0, 0, 0, pad_length])
         return one_hot_labels

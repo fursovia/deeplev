@@ -17,18 +17,13 @@ parser.add_argument("--cuda", type=int, default=-1, help="cuda device number")
 parser.add_argument(
     "--model_dir", type=str, default="experiments", help="where to save checkpoints"
 )
-parser.add_argument(
-    "--data_dir", type=str, default="data", help="where train.csv and test.csv are"
-)
+parser.add_argument("--data_dir", type=str, default="data", help="where train.csv and test.csv are")
 
 parser.add_argument("--num_epochs", type=int, default=30)
 parser.add_argument("--batch_size", type=int, default=1024)
 parser.add_argument("--learning_rate", type=float, default=0.001)
 parser.add_argument(
-    "--patience",
-    type=int,
-    default=2,
-    help="Number of epochs to be patient before early stopping",
+    "--patience", type=int, default=2, help="Number of epochs to be patient before early stopping",
 )
 parser.add_argument("--resume", action="store_true")
 parser.add_argument("--lazy", action="store_true")
