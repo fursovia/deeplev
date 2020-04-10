@@ -72,7 +72,5 @@ class DeepLevenshteinPredictor(Predictor):
     ) -> List[Instance]:
         new_instance = deepcopy(instance)
         euclidian_distance = outputs["euclidian_distance"]
-        new_instance.add_field(
-            "distance", ArrayField(array=np.array([euclidian_distance]))
-        )
+        new_instance.add_field("distance", ArrayField(array=np.array([euclidian_distance])))
         return [new_instance]

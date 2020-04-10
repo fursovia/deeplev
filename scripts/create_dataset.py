@@ -33,9 +33,7 @@ if __name__ == "__main__":
     vocab = list(set("".join(sequences)))
 
     dissimilar_examples = []
-    dissimilar_indexes = np.random.randint(
-        0, len(sequences), size=(args.num_dissimilar, 2)
-    )
+    dissimilar_indexes = np.random.randint(0, len(sequences), size=(args.num_dissimilar, 2))
     for id1, id2 in tqdm(dissimilar_indexes):
         tr1 = sequences[id1]
         tr2 = sequences[id2]

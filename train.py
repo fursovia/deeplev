@@ -14,21 +14,14 @@ from deeplev.utils import load_weights
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cuda", type=int, default=-1, help="cuda device number")
-parser.add_argument(
-    "--model_dir", type=str, default="experiments", help="where to save checkpoints"
-)
-parser.add_argument(
-    "--data_dir", type=str, default="data", help="where train.csv and test.csv are"
-)
+parser.add_argument("--model_dir", type=str, default="experiments", help="where to save checkpoints")
+parser.add_argument("--data_dir", type=str, default="data", help="where train.csv and test.csv are")
 
 parser.add_argument("--num_epochs", type=int, default=30)
 parser.add_argument("--batch_size", type=int, default=1024)
 parser.add_argument("--learning_rate", type=float, default=0.001)
 parser.add_argument(
-    "--patience",
-    type=int,
-    default=2,
-    help="Number of epochs to be patient before early stopping",
+    "--patience", type=int, default=2, help="Number of epochs to be patient before early stopping",
 )
 parser.add_argument("--resume", action="store_true")
 parser.add_argument("--lazy", action="store_true")
@@ -50,14 +43,12 @@ if __name__ == "__main__":
         vocab = Vocabulary.from_files(model_dir / "vocab")
     else:
         vocab = Vocabulary.from_instances(
-            chain(train_dataset, test_dataset),
-            tokens_to_add={"tokens": [START_SYMBOL, END_SYMBOL]},
+            chain(train_dataset, test_dataset), tokens_to_add={"tokens": [START_SYMBOL, END_SYMBOL]},
         )
         vocab.save_to_files(model_dir / "vocab")
 
     iterator = BucketIterator(
-        batch_size=args.batch_size,
-        sorting_keys=[("sequence_a", "num_tokens"), ("sequence_b", "num_tokens")],
+        batch_size=args.batch_size, sorting_keys=[("sequence_a", "num_tokens"), ("sequence_b", "num_tokens")],
     )
     iterator.index_with(vocab)
 

@@ -35,9 +35,7 @@ class ApproxKNN:
         self.__ef_search = int(ef_search)
         self.__normalize = normalize
         self.__num_threads = 0 if n_jobs < 0 else n_jobs
-        self.__index = nmslib.init(
-            method="hnsw", space=self.__space, data_type=nmslib.DataType.DENSE_VECTOR
-        )
+        self.__index = nmslib.init(method="hnsw", space=self.__space, data_type=nmslib.DataType.DENSE_VECTOR)
 
     def set_query_params(self, ef_search: int) -> None:
         self.__index.setQueryTimeParams({"efSearch": int(ef_search)})
@@ -50,31 +48,23 @@ class ApproxKNN:
         self.set_query_params(self.__ef_search)
         return self
 
-    def kneighbors(
-        self, data: np.ndarray, n_neighbors: Optional[int] = None
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def kneighbors(self, data: np.ndarray, n_neighbors: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
         if self.__normalize:
             data = l2_norm(data, norm="l2", axis=1)
         num_neighbors = n_neighbors or self.__n_neighbors
         # TODO: sometimes does not find anything
         neigh_and_dist = np.array(
-            self.__index.knnQueryBatch(
-                data, k=num_neighbors, num_threads=self.__num_threads
-            )
+            self.__index.knnQueryBatch(data, k=num_neighbors, num_threads=self.__num_threads)
         )
         distances = neigh_and_dist[:, 1, :]
         indexes = neigh_and_dist[:, 0, :].astype(np.int32)
         return distances, indexes
 
     def load(self, index_path: str) -> "ApproxKNN":
-        self.__index.loadIndex(
-            index_path, load_data=(self.__index_params["skip_optimized_index"] == 1)
-        )
+        self.__index.loadIndex(index_path, load_data=(self.__index_params["skip_optimized_index"] == 1))
         self.set_query_params(self.__ef_search)
         return self
 
     def save(self, index_path: str) -> None:
         # we need to save data for non-optimized index
-        self.__index.saveIndex(
-            index_path, save_data=(self.__index_params["skip_optimized_index"] == 1)
-        )
+        self.__index.saveIndex(index_path, save_data=(self.__index_params["skip_optimized_index"] == 1))
