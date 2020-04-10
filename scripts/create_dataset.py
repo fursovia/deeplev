@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from deeplev.utils import edit_distance, clean_sequence
-from deeplev.typo_generator import generate_default_typo
+from scripts.typo_generator import generate_default_typo
 
 
 parser = argparse.ArgumentParser()

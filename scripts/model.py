@@ -11,7 +11,7 @@ from allennlp.modules.seq2vec_encoders import Seq2VecEncoder, BagOfEmbeddingsEnc
 from allennlp.modules.text_field_embedders import TextFieldEmbedder, BasicTextFieldEmbedder
 from allennlp.modules.attention import Attention, AdditiveAttention
 
-from deeplev.allennlp_modules.onehot_encoder import OnehotEncoder
+from scripts.allennlp_modules import OnehotEncoder
 
 EMB_DIM = 64
 HID_DIM = 32

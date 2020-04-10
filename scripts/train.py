@@ -9,8 +9,8 @@ from allennlp.training.trainer import Trainer
 from allennlp.data.iterators import BucketIterator
 from allennlp.common.util import dump_metrics
 
-from deeplev.model import get_deep_levenshtein
-from deeplev.dataset import LevenshteinReader, START_SYMBOL, END_SYMBOL
+from scripts.model import get_deep_levenshtein
+from scripts.dataset import LevenshteinReader, START_SYMBOL, END_SYMBOL
 from deeplev.utils import load_weights
 
 
