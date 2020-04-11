@@ -3,27 +3,11 @@ from typing import Dict, Optional
 import torch
 from allennlp.data import Vocabulary
 from allennlp.models.model import Model
-from allennlp.modules import Embedding
-from allennlp.modules.attention import AdditiveAttention, Attention
-from allennlp.modules.seq2seq_encoders import (
-    PytorchSeq2SeqWrapper,
-    Seq2SeqEncoder,
-    StackedSelfAttentionEncoder,
-)
-from allennlp.modules.seq2vec_encoders import (
-    BagOfEmbeddingsEncoder,
-    CnnEncoder,
-    Seq2VecEncoder,
-)
-from allennlp.modules.text_field_embedders import (
-    BasicTextFieldEmbedder,
-    TextFieldEmbedder,
-)
+from allennlp.modules.attention import Attention
+from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
+from allennlp.modules.seq2vec_encoders import Seq2VecEncoder
+from allennlp.modules.text_field_embedders import TextFieldEmbedder
 from allennlp.nn import util
-from deeplev.allennlp_modules.onehot_encoder import OnehotEncoder
-
-EMB_DIM = 64
-HID_DIM = 32
 
 
 class DeepLevenshtein(Model):
@@ -96,90 +80,3 @@ class DeepLevenshtein(Model):
             output_dict["loss"] = loss
 
         return output_dict
-
-
-def get_deep_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
-    token_embedding = Embedding(num_embeddings=vocab.get_vocab_size("tokens"), embedding_dim=EMB_DIM)
-    word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
-    lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMB_DIM, HID_DIM, batch_first=True, bidirectional=True))
-    body = BagOfEmbeddingsEncoder(embedding_dim=lstm.get_output_dim(), averaged=True)
-
-    model = DeepLevenshtein(
-        vocab=vocab, text_field_embedder=word_embeddings, seq2seq_encoder=lstm, seq2vec_encoder=body,
-    )
-    return model
-
-
-def get_deep_levenshtein_attention(vocab: Vocabulary) -> DeepLevenshtein:
-
-    token_embedding = Embedding(num_embeddings=vocab.get_vocab_size("tokens"), embedding_dim=EMB_DIM)
-    word_embeddings = BasicTextFieldEmbedder({"tokens": token_embedding})
-    lstm = PytorchSeq2SeqWrapper(torch.nn.LSTM(EMB_DIM, HID_DIM, batch_first=True, bidirectional=True))
-    body = BagOfEmbeddingsEncoder(embedding_dim=lstm.get_output_dim(), averaged=True)
-    attention = AdditiveAttention(vector_dim=body.get_output_dim(), matrix_dim=body.get_output_dim())
-
-    model = DeepLevenshtein(
-        vocab=vocab,
-        text_field_embedder=word_embeddings,
-        seq2seq_encoder=lstm,
-        seq2vec_encoder=body,
-        attention=attention,
-    )
-    return model
-
-
-def _get_default_cnn_encoder(embedding_dim: int) -> CnnEncoder:
-    return CnnEncoder(embedding_dim=embedding_dim, num_filters=8, ngram_filter_sizes=(3, 4, 5, 7))
-
-
-def get_onehot_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
-    token_encoder = OnehotEncoder(vocab_size=vocab.get_vocab_size("tokens"))
-    token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    body_encoder = _get_default_cnn_encoder(token_encoder.get_output_dim())
-
-    model = DeepLevenshtein(vocab=vocab, text_field_embedder=token_embeddings, seq2vec_encoder=body_encoder)
-    return model
-
-
-def get_emb_cnn_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
-    token_encoder = Embedding(num_embeddings=vocab.get_vocab_size("tokens"), embedding_dim=EMB_DIM)
-    token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    body_encoder = _get_default_cnn_encoder(token_encoder.get_output_dim())
-
-    model = DeepLevenshtein(vocab=vocab, text_field_embedder=token_embeddings, seq2vec_encoder=body_encoder)
-    return model
-
-
-def get_emb_cnn_attention_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
-    token_encoder = Embedding(num_embeddings=vocab.get_vocab_size("tokens"), embedding_dim=EMB_DIM)
-    token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    body_encoder = _get_default_cnn_encoder(token_encoder.get_output_dim())
-    attention = AdditiveAttention(
-        vector_dim=body_encoder.get_output_dim(), matrix_dim=token_encoder.get_output_dim(),
-    )
-
-    model = DeepLevenshtein(
-        vocab=vocab, text_field_embedder=token_embeddings, seq2vec_encoder=body_encoder, attention=attention,
-    )
-    return model
-
-
-def get_stacked_self_att_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
-    token_encoder = Embedding(num_embeddings=vocab.get_vocab_size("tokens"), embedding_dim=EMB_DIM)
-    token_embeddings = BasicTextFieldEmbedder({"tokens": token_encoder})
-    seq2seq_encoder = StackedSelfAttentionEncoder(
-        input_dim=EMB_DIM,
-        hidden_dim=HID_DIM,
-        projection_dim=16,
-        feedforward_hidden_dim=8,
-        num_layers=3,
-        num_attention_heads=4,
-    )
-    body_encoder = BagOfEmbeddingsEncoder(embedding_dim=seq2seq_encoder.get_output_dim(), averaged=True)
-    model = DeepLevenshtein(
-        vocab=vocab,
-        text_field_embedder=token_embeddings,
-        seq2seq_encoder=seq2seq_encoder,
-        seq2vec_encoder=body_encoder,
-    )
-    return model
