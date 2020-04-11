@@ -84,9 +84,9 @@ class DeepLevenshtein(Model):
         anchor: Dict[str, torch.LongTensor],
         positive: Dict[str, torch.LongTensor],
         negative: Dict[str, torch.LongTensor],
-        positive_distance: torch.Tensor,
-        negative_distance: torch.Tensor,
-        inbetween_distance: torch.Tensor
+        positive_distance: Optional[torch.Tensor],
+        negative_distance: Optional[torch.Tensor],
+        inbetween_distance: Optional[torch.Tensor]
     ) -> Dict[str, torch.Tensor]:
         embedded_anchor = self.encode_sequence(anchor)
         embedded_positive = self.encode_sequence(positive)

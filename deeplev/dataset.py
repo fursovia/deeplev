@@ -9,7 +9,6 @@ from allennlp.data.fields import TextField, Field, ArrayField
 from allennlp.data.dataset_readers import DatasetReader
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer
-from allennlp.common.file_utils import cached_path
 from allennlp.common.util import START_SYMBOL, END_SYMBOL
 
 
@@ -33,6 +32,19 @@ class LevenshteinReader(DatasetReader):
                 inbetween_distance=row.inbetween_distance.squeeze()
             )
 
+    def str_to_textfield(self, text: str) -> TextField:
+        return TextField(
+            self._tokenizer.tokenize(text),
+            {
+                "tokens": _get_default_indexer()
+            }
+        )
+
+    def float_to_arrayfield(self, value: float) -> ArrayField:
+        return ArrayField(
+            array=np.array([value])
+        )
+
     def text_to_instance(
         self,
         anchor: str,
@@ -44,32 +56,11 @@ class LevenshteinReader(DatasetReader):
     ) -> Instance:
         fields: Dict[str, Field] = dict()
 
-        fields["anchor"] = TextField(
-            self._tokenizer.tokenize(anchor),
-            {
-                "tokens": _get_default_indexer()
-            }
-        )
-        fields["positive"] = TextField(
-            self._tokenizer.tokenize(positive),
-            {
-                "tokens": _get_default_indexer()
-            }
-        )
-        fields["negative"] = TextField(
-            self._tokenizer.tokenize(negative),
-            {
-                "tokens": _get_default_indexer()
-            }
-        )
-        fields["positive_distance"] = ArrayField(
-            array=np.array([positive_distance])
-        )
-        fields["negative_distance"] = ArrayField(
-            array=np.array([negative_distance])
-        )
-        fields["inbetween_distance"] = ArrayField(
-            array=np.array([inbetween_distance])
-        )
+        fields["anchor"] = self.str_to_textfield(anchor)
+        fields["positive"] = self.str_to_textfield(positive)
+        fields["negative"] = self.str_to_textfield(negative)
+        fields["positive_distance"] = self.float_to_arrayfield(positive_distance)
+        fields["negative_distance"] = self.float_to_arrayfield(negative_distance)
+        fields["inbetween_distance"] = self.float_to_arrayfield(inbetween_distance)
 
         return Instance(fields)
