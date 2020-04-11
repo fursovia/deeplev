@@ -3,7 +3,6 @@ from typing import Dict, Optional
 
 import numpy as np
 from allennlp.common.file_utils import cached_path
-from allennlp.common.util import END_SYMBOL, START_SYMBOL
 from allennlp.data import Instance
 from allennlp.data.dataset_readers import DatasetReader
 from allennlp.data.fields import ArrayField, Field, TextField
@@ -12,7 +11,7 @@ from allennlp.data.tokenizers import CharacterTokenizer
 
 
 def _get_default_indexer() -> SingleIdTokenIndexer:
-    return SingleIdTokenIndexer(namespace="tokens", start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
+    return SingleIdTokenIndexer(namespace="tokens")
 
 
 class LevenshteinReader(DatasetReader):
