@@ -24,14 +24,10 @@ class DeepLevenshtein(Model):
 
         self._loss = torch.nn.L1Loss()
 
-    def calculate_euclidian_distance(
-        self, embedded_sequence_a: Dict[str, torch.Tensor], embedded_sequence_b: Dict[str, torch.Tensor],
-    ) -> torch.Tensor:
-        vector_a = embedded_sequence_a["vector"]
-        vector_b = embedded_sequence_b["vector"]
+    def calculate_euclidian_distance(self, vector_a: torch.Tensor, vector_b: torch.Tensor) -> torch.Tensor:
         return torch.pairwise_distance(vector_a, vector_b, p=2.0)
 
-    def encode_sequence(self, sequence: Dict[str, torch.LongTensor]) -> Dict[str, torch.Tensor]:
+    def encode_sequence(self, sequence: Dict[str, torch.LongTensor]) -> torch.Tensor:
         embedded_sequence = self.text_field_embedder(sequence)
         mask = util.get_text_field_mask(sequence).float()
         # It is needed if we pad the initial sequence (or truncate)
@@ -39,11 +35,7 @@ class DeepLevenshtein(Model):
         if self.seq2seq_encoder is not None:
             embedded_sequence = self.seq2seq_encoder(embedded_sequence, mask=mask)
         embedded_sequence_vector = self.seq2vec_encoder(embedded_sequence, mask=mask)
-        return {
-            "mask": mask,
-            "vector": embedded_sequence_vector,
-            "matrix": embedded_sequence,
-        }
+        return embedded_sequence_vector
 
     def forward(
         self,
