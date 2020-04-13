@@ -24,9 +24,6 @@ class DeepLevenshtein(Model):
 
         self._loss = torch.nn.L1Loss()
 
-    def calculate_euclidian_distance(self, vector_a: torch.Tensor, vector_b: torch.Tensor) -> torch.Tensor:
-        return torch.pairwise_distance(vector_a, vector_b, p=2.0)
-
     def encode_sequence(self, sequence: Dict[str, torch.LongTensor]) -> torch.Tensor:
         embedded_sequence = self.text_field_embedder(sequence)
         mask = util.get_text_field_mask(sequence).float()
@@ -46,7 +43,7 @@ class DeepLevenshtein(Model):
         embedded_sequence_a = self.encode_sequence(sequence_a)
         embedded_sequence_b = self.encode_sequence(sequence_b)
 
-        euclidian_distance = self.calculate_euclidian_distance(embedded_sequence_a, embedded_sequence_b)
+        euclidian_distance = torch.pairwise_distance(embedded_sequence_a, embedded_sequence_b)
         output_dict = {"euclidian_distance": euclidian_distance}
 
         if distance is not None:
