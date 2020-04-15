@@ -58,11 +58,11 @@ class LevenshteinReader(DatasetReader):
     ) -> Instance:
         fields: Dict[str, Field] = dict()
 
-        fields["anchor"] = str_to_textfield(anchor)
-        fields["positive"] = str_to_textfield(positive)
-        fields["negative"] = str_to_textfield(negative)
-        fields["positive_distance"] = float_to_arrayfield(positive_distance)
-        fields["negative_distance"] = float_to_arrayfield(negative_distance)
-        fields["inbetween_distance"] = float_to_arrayfield(inbetween_distance)
+        fields["anchor"] = str_to_textfield(self._tokenizer, anchor)
+        fields["positive"] = str_to_textfield(self._tokenizer, positive)
+        fields["negative"] = str_to_textfield(self._tokenizer, negative)
+        fields["positive_distance"] = float_to_arrayfield(self._tokenizer, positive_distance)
+        fields["negative_distance"] = float_to_arrayfield(self._tokenizer, negative_distance)
+        fields["inbetween_distance"] = float_to_arrayfield(self._tokenizer, inbetween_distance)
 
         return Instance(fields)
