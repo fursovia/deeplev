@@ -1,8 +1,9 @@
 [tool.poetry]
 name = "deeplev"
 version = "0.1.0"
-description = ""
-authors = ["fursovia <fursov.ia@gmail.com>"]
+description = "String Similarity Search with Metric Learning"
+authors = ["Ivan Fursov <fursov.ia@gmail.com>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
@@ -35,5 +36,5 @@ exclude = '''
 '''
 
 [build-system]
-requires = ["poetry==0.12.17"]
+requires = ["poetry>=0.12.17"]
 build-backend = "poetry.masonry.api"
