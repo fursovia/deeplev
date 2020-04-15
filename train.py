@@ -48,7 +48,8 @@ if __name__ == "__main__":
         vocab.save_to_files(model_dir / "vocab")
 
     iterator = BucketIterator(
-        batch_size=args.batch_size, sorting_keys=[("sequence_a", "num_tokens"), ("sequence_b", "num_tokens")],
+        batch_size=args.batch_size,
+        sorting_keys=[("anchor", "num_tokens"), ("positive", "num_tokens"), ("negative", "num_tokens")],
     )
     iterator.index_with(vocab)
 
