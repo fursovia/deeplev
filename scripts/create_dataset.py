@@ -47,11 +47,13 @@ if __name__ == "__main__":
         inbetween_distance = edit_distance(positive, negative)
 
         if positive_distance < negative_distance:
-            examples.append((random_text, positive, negative, positive_distance, negative_distance, inbetween_distance))
+            examples.append(
+                (random_text, positive, negative, positive_distance, negative_distance, inbetween_distance)
+            )
 
     examples = pd.DataFrame(
         examples,
-        columns=['anchor', 'positive', 'negative', 'positive_distance', 'negative_distance', 'inbetween_distance']
+        columns=['anchor', 'positive', 'negative', 'positive_distance', 'negative_distance', 'inbetween_distance'],
     )
 
     train, test = train_test_split(examples, test_size=args.test_size)

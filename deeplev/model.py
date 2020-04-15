@@ -87,22 +87,18 @@ class DeepLevenshtein(Model):
         negative: Optional[Dict[str, torch.LongTensor]],
         positive_distance: Optional[torch.Tensor],
         negative_distance: Optional[torch.Tensor],
-        inbetween_distance: Optional[torch.Tensor]
+        inbetween_distance: Optional[torch.Tensor],
     ) -> Dict[str, torch.Tensor]:
         embedded_anchor = self.encode_sequence(anchor)
         embedded_positive = self.encode_sequence(positive)
-        
+
         euclid_positive_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_positive)
-        
-        output_dict = {
-            "euclidian_pos": euclid_positive_distance,
-            "euclidian_neg": 0,
-            "euclidian_inbetween": 0
-        }
-        
+
+        output_dict = {"euclidian_pos": euclid_positive_distance, "euclidian_neg": 0, "euclidian_inbetween": 0}
+
         if negative and positive_distance and negative_distance and inbetween_distance:
             embedded_negative = self.encode_sequence(negative)
-            
+
             euclid_negative_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_negative)
             euclid_inbetween_distance = self.calculate_euclidian_distance(embedded_positive, embedded_negative)
 
