@@ -20,6 +20,7 @@ from allennlp.modules.text_field_embedders import (
     TextFieldEmbedder,
 )
 from allennlp.nn import util
+
 from deeplev.allennlp_modules.onehot_encoder import OnehotEncoder
 
 EMB_DIM = 64
@@ -81,18 +82,39 @@ class DeepLevenshtein(Model):
 
     def forward(
         self,
-        sequence_a: Dict[str, torch.LongTensor],
-        sequence_b: Dict[str, torch.LongTensor],
-        distance: Optional[torch.Tensor] = None,
+        anchor: Dict[str, torch.LongTensor],
+        positive: Dict[str, torch.LongTensor],
+        negative: Optional[Dict[str, torch.LongTensor]],
+        positive_distance: Optional[torch.Tensor],
+        negative_distance: Optional[torch.Tensor],
+        inbetween_distance: Optional[torch.Tensor],
     ) -> Dict[str, torch.Tensor]:
-        embedded_sequence_a = self.encode_sequence(sequence_a)
-        embedded_sequence_b = self.encode_sequence(sequence_b)
+        embedded_anchor = self.encode_sequence(anchor)
+        embedded_positive = self.encode_sequence(positive)
 
-        euclidian_distance = self.calculate_euclidian_distance(embedded_sequence_a, embedded_sequence_b)
-        output_dict = {"euclidian_distance": euclidian_distance}
+        euclid_positive_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_positive)
 
-        if distance is not None:
-            loss = self._loss(euclidian_distance, distance.view(-1))
+        output_dict = {"euclidian_pos": euclid_positive_distance}
+
+        if (
+            negative is not None
+            and positive_distance is not None
+            and negative_distance is not None
+            and inbetween_distance is not None
+        ):
+            embedded_negative = self.encode_sequence(negative)
+
+            euclid_negative_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_negative)
+            euclid_inbetween_distance = self.calculate_euclidian_distance(embedded_positive, embedded_negative)
+
+            output_dict["euclidian_neg"] = euclid_negative_distance
+            output_dict["euclidian_inbetween"] = euclid_inbetween_distance
+
+            positive_loss = self._loss(euclid_positive_distance, positive_distance.view(-1))
+            negative_loss = self._loss(euclid_negative_distance, negative_distance.view(-1))
+            inbetween_loss = self._loss(euclid_inbetween_distance, inbetween_distance.view(-1))
+
+            loss = positive_loss + negative_loss + inbetween_loss
             output_dict["loss"] = loss
 
         return output_dict

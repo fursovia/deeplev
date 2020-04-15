@@ -7,6 +7,8 @@ from allennlp.data import Instance
 from allennlp.data.fields import ArrayField
 from allennlp.predictors.predictor import Predictor
 
+from deeplev.dataset import str_to_textfield
+
 
 @Predictor.register("deep_levenshtein")
 class DeepLevenshteinPredictor(Predictor):
@@ -20,12 +22,16 @@ class DeepLevenshteinPredictor(Predictor):
         """
         sequence_a = json_dict["sequence_a"]
         sequence_b = json_dict["sequence_b"]
-        return self._dataset_reader.text_to_instance(sequence_a, sequence_b)
+
+        fields = {}
+        fields["anchor"] = str_to_textfield(self._dataset_reader._tokenizer, sequence_a)
+        fields["positive"] = str_to_textfield(self._dataset_reader._tokenizer, sequence_b)
+
+        return Instance(fields)
 
     def predictions_to_labeled_instances(
         self, instance: Instance, outputs: Dict[str, np.ndarray]
     ) -> List[Instance]:
         new_instance = deepcopy(instance)
-        normalized_cosine = outputs["normalized_cosine"]
-        new_instance.add_field("similarity", ArrayField(array=np.array([normalized_cosine])))
+        new_instance.add_field("similarity", ArrayField(array=np.array([outputs["euclidian_pos"]])))
         return [new_instance]
