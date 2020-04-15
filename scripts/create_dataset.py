@@ -18,12 +18,12 @@ parser.add_argument('--dataset_size', type=int, default=1_000_000)
 parser.add_argument('--test_size', type=float, default=0.05)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = parser.parse_args()
     output_dir = Path(args.output_dir)
     output_dir.mkdir(exist_ok=True, parents=True)
-    train_path = output_dir / 'train.csv'
-    test_path = output_dir / 'test.csv'
+    train_path = output_dir / "train.csv"
+    test_path = output_dir / "test.csv"
     assert not train_path.exists() and not test_path.exists()
 
     data = pd.read_csv(args.csv_path)

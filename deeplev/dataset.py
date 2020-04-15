@@ -1,19 +1,38 @@
 from typing import Dict, Optional, Union, Iterator
 import csv
+from typing import Dict, Optional
 
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from allennlp.common.file_utils import cached_path
+from allennlp.common.util import END_SYMBOL, START_SYMBOL
 from allennlp.data import Instance
-from allennlp.data.fields import TextField, Field, ArrayField
 from allennlp.data.dataset_readers import DatasetReader
+from allennlp.data.fields import ArrayField, Field, TextField
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer
+from allennlp.data.tokenizers.tokenizer import Tokenizer
 from allennlp.common.util import START_SYMBOL, END_SYMBOL
 
 
 def _get_default_indexer() -> SingleIdTokenIndexer:
-    return SingleIdTokenIndexer(namespace='tokens', start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
+    return SingleIdTokenIndexer(namespace="tokens", start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
+
+
+def str_to_textfield(tokenizer: Tokenizer, text: str) -> TextField:
+    return TextField(
+        tokenizer.tokenize(text),
+        {
+            "tokens": _get_default_indexer()
+        }
+    )
+
+
+def float_to_arrayfield(self, value: float) -> ArrayField:
+    return ArrayField(
+        array=np.array([value])
+    )
 
 
 class LevenshteinReader(DatasetReader):
@@ -32,19 +51,6 @@ class LevenshteinReader(DatasetReader):
                 inbetween_distance=row.inbetween_distance.squeeze()
             )
 
-    def str_to_textfield(self, text: str) -> TextField:
-        return TextField(
-            self._tokenizer.tokenize(text),
-            {
-                "tokens": _get_default_indexer()
-            }
-        )
-
-    def float_to_arrayfield(self, value: float) -> ArrayField:
-        return ArrayField(
-            array=np.array([value])
-        )
-
     def text_to_instance(
         self,
         anchor: str,
@@ -56,11 +62,11 @@ class LevenshteinReader(DatasetReader):
     ) -> Instance:
         fields: Dict[str, Field] = dict()
 
-        fields["anchor"] = self.str_to_textfield(anchor)
-        fields["positive"] = self.str_to_textfield(positive)
-        fields["negative"] = self.str_to_textfield(negative)
-        fields["positive_distance"] = self.float_to_arrayfield(positive_distance)
-        fields["negative_distance"] = self.float_to_arrayfield(negative_distance)
-        fields["inbetween_distance"] = self.float_to_arrayfield(inbetween_distance)
+        fields["anchor"] = str_to_textfield(anchor)
+        fields["positive"] = str_to_textfield(positive)
+        fields["negative"] = str_to_textfield(negative)
+        fields["positive_distance"] = float_to_arrayfield(positive_distance)
+        fields["negative_distance"] = float_to_arrayfield(negative_distance)
+        fields["inbetween_distance"] = float_to_arrayfield(inbetween_distance)
 
         return Instance(fields)
