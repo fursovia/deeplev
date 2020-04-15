@@ -43,8 +43,7 @@ jobs:
           --csv_path ./data/test/data.csv \
           --col_name comment_text \
           --output_dir ./data/test/ \
-          --num_dissimilar 100 \
-          --num_similar 100 \
+          --dataset_size 200 \
           --test_size 0.2
     - name: Check pipeline
       run: |
