@@ -11,11 +11,11 @@ from deeplev.sampler import TypoSampler
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--csv_path', type=str, required=True)
-parser.add_argument('--col_name', type=str, required=True)
-parser.add_argument('--output_dir', type=str, required=True)
-parser.add_argument('--dataset_size', type=int, default=1_000_000)
-parser.add_argument('--test_size', type=float, default=0.05)
+parser.add_argument("--csv_path", type=str, required=True)
+parser.add_argument("--col_name", type=str, required=True)
+parser.add_argument("--output_dir", type=str, required=True)
+parser.add_argument("--dataset_size", type=int, default=1_000_000)
+parser.add_argument("--test_size", type=float, default=0.05)
 
 
 if __name__ == "__main__":
@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     examples = pd.DataFrame(
         examples,
-        columns=['anchor', 'positive', 'negative', 'positive_distance', 'negative_distance', 'inbetween_distance'],
+        columns=["anchor", "positive", "negative", "positive_distance", "negative_distance", "inbetween_distance"],
     )
 
     train, test = train_test_split(examples, test_size=args.test_size)

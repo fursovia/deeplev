@@ -24,8 +24,8 @@ class DeepLevenshteinPredictor(Predictor):
         sequence_b = json_dict["sequence_b"]
 
         fields = {}
-        fields['anchor'] = str_to_textfield(self._dataset_reader._tokenizer, sequence_a)
-        fields['positive'] = str_to_textfield(self._dataset_reader._tokenizer, sequence_b)
+        fields["anchor"] = str_to_textfield(self._dataset_reader._tokenizer, sequence_a)
+        fields["positive"] = str_to_textfield(self._dataset_reader._tokenizer, sequence_b)
 
         return Instance(fields)
 

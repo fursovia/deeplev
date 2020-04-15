@@ -94,7 +94,7 @@ class DeepLevenshtein(Model):
 
         euclid_positive_distance = self.calculate_euclidian_distance(embedded_anchor, embedded_positive)
 
-        output_dict = {"euclidian_pos": euclid_positive_distance, "euclidian_neg": 0, "euclidian_inbetween": 0}
+        output_dict = {"euclidian_pos": euclid_positive_distance}
 
         if negative and positive_distance and negative_distance and inbetween_distance:
             embedded_negative = self.encode_sequence(negative)
