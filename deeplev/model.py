@@ -1,7 +1,8 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 import torch
-from allennlp.data import Vocabulary
+from allennlp.data.dataset import Batch
+from allennlp.data import Vocabulary, Instance
 from allennlp.models.model import Model
 from allennlp.modules import Embedding
 from allennlp.modules.attention import AdditiveAttention, Attention
@@ -20,6 +21,7 @@ from allennlp.modules.text_field_embedders import (
     TextFieldEmbedder,
 )
 from allennlp.nn import util
+
 from deeplev.allennlp_modules.onehot_encoder import OnehotEncoder
 
 EMB_DIM = 64
@@ -96,6 +98,13 @@ class DeepLevenshtein(Model):
             output_dict["loss"] = loss
 
         return output_dict
+
+    def instances_to_model_input(self, instances: List[Instance]) -> Dict[str, torch.Tensor]:
+        cuda_device = self._get_prediction_device()
+        dataset = Batch(instances)
+        dataset.index_instances(self.vocab)
+        model_input = util.move_to_device(dataset.as_tensor_dict(), cuda_device)
+        return model_input
 
 
 def get_deep_levenshtein(vocab: Vocabulary) -> DeepLevenshtein:
