@@ -10,7 +10,7 @@
     "text_field_embedder": {
         "token_embedders": {
             "tokens": {
-                "type": "onehot_encoder"
+                "type": "onehot_embedder"
             }
         }
     }

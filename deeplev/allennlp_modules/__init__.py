@@ -1,2 +1,2 @@
-from .onehot_encoder import OnehotEncoder
+from .onehot_embedder import OnehotEmbedder
 from .onehot_cnn import OnehotCnnEncoder

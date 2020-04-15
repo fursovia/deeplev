@@ -6,8 +6,8 @@ from allennlp.common import Params
 from allennlp.data import Vocabulary
 
 
-@TokenEmbedder.register("onehot_encoder")
-class OnehotEncoder(TokenEmbedder):
+@TokenEmbedder.register("onehot_embedder")
+class OnehotEmbedder(TokenEmbedder):
     def __init__(self, vocab_size: int, max_seq_length: Optional[int] = None) -> None:
         super().__init__()
         self._vocab_size = vocab_size
@@ -28,7 +28,7 @@ class OnehotEncoder(TokenEmbedder):
         return one_hot_labels
 
     @classmethod
-    def from_params(cls, params: Params, vocab: Vocabulary) -> "OnehotEncoder":
+    def from_params(cls, params: Params, vocab: Vocabulary) -> "OnehotEmbedder":
         vocab_size = params.pop_int("vocab_size", None)
         vocab_namespace = params.pop("vocab_namespace", None if vocab_size else "tokens")
         if vocab_size is None:
