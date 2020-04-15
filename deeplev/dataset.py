@@ -1,11 +1,8 @@
-from typing import Dict, Optional, Union, Iterator
-import csv
-from typing import Dict, Optional
+from typing import Dict, Union, Iterator
 
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from allennlp.common.file_utils import cached_path
 from allennlp.common.util import END_SYMBOL, START_SYMBOL
 from allennlp.data import Instance
 from allennlp.data.dataset_readers import DatasetReader
@@ -13,7 +10,6 @@ from allennlp.data.fields import ArrayField, Field, TextField
 from allennlp.data.token_indexers import SingleIdTokenIndexer
 from allennlp.data.tokenizers import CharacterTokenizer
 from allennlp.data.tokenizers.tokenizer import Tokenizer
-from allennlp.common.util import START_SYMBOL, END_SYMBOL
 
 
 def _get_default_indexer() -> SingleIdTokenIndexer:
@@ -21,11 +17,18 @@ def _get_default_indexer() -> SingleIdTokenIndexer:
 
 
 def str_to_textfield(tokenizer: Tokenizer, text: str) -> TextField:
-    return TextField(tokenizer.tokenize(text), {"tokens": _get_default_indexer()})
+    return TextField(
+        tokenizer.tokenize(text),
+        {
+            "tokens": _get_default_indexer()
+        }
+    )
 
 
 def float_to_arrayfield(self, value: float) -> ArrayField:
-    return ArrayField(array=np.array([value]))
+    return ArrayField(
+        array=np.array([value])
+    )
 
 
 class LevenshteinReader(DatasetReader):
@@ -41,7 +44,7 @@ class LevenshteinReader(DatasetReader):
                 negative=row.negative.squeeze(),
                 positive_distance=row.positive_distance.squeeze(),
                 negative_distance=row.negative_distance.squeeze(),
-                inbetween_distance=row.inbetween_distance.squeeze(),
+                inbetween_distance=row.inbetween_distance.squeeze()
             )
 
     def text_to_instance(
@@ -51,7 +54,7 @@ class LevenshteinReader(DatasetReader):
         negative: str,
         positive_distance: float,
         negative_distance: float,
-        inbetween_distance: float,
+        inbetween_distance: float
     ) -> Instance:
         fields: Dict[str, Field] = dict()
 

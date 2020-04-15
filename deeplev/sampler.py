@@ -6,7 +6,7 @@ from deeplev.utils import clean_sequence
 from deeplev.typo_generator import generate_default_typo
 
 
-class BaseSampler:
+class BaseSampler(ABC):
     def __init__(self, texts: Sequence[str]) -> None:
         self._texts = texts
 
