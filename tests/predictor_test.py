@@ -36,8 +36,8 @@ def test_embedder_predictor():
     sequence = "qwerty"
     model = get_deep_levenshtein(vocab=Vocabulary(counter=_get_dummy_counter([sequence])))
     predictor = EmbedderPredictor(model=model)
-    embedding = predictor.get_embeddings(sequence=sequence)
-    assert len(embedding.shape) == 1
+    embedding = predictor.get_embeddings(sequences=[sequence])
+    assert embedding.shape == (1, 64)
 
 
 def test_search_predictor():

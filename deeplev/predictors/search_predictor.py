@@ -20,19 +20,13 @@ class SearchPredictor(EmbedderPredictor):
         self._data: np.ndarray = None
 
     def fit(self, data: Sequence[str]) -> "SearchPredictor":
-        embeddings = []
-        for seq in data:
-            embeddings.append(self.get_embeddings(seq))
-        embeddings = np.array(embeddings)
+        embeddings = self.get_embeddings(data)
         self._data = np.array(data)
         self._knn.fit(embeddings)
         return self
 
     def find_neighbors(self, data: Sequence[str], n_neighbors: Optional[int] = None) -> List[List[str]]:
         n_neighbors = n_neighbors or self._num_neighbors
-        embeddings = []
-        for seq in data:
-            embeddings.append(self.get_embeddings(seq))
-        embeddings = np.array(embeddings)
+        embeddings = self.get_embeddings(data)
         _, indexes = self._knn.kneighbors(embeddings, n_neighbors=n_neighbors)
         return self._data[indexes].tolist()
