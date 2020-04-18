@@ -1,5 +1,6 @@
 from enum import Enum
-from typing import Optional, Tuple
+from typing import Optional
+from collections import namedtuple
 
 import nmslib
 import numpy as np
@@ -9,6 +10,9 @@ from sklearn.preprocessing import normalize as l2_norm
 class SpaceName(str, Enum):
     COSINE = "cosinesimil"
     EUCLIDIAN = "l2"
+
+
+KNNOutput = namedtuple("KNNOutput", ["distances", "indexes"])
 
 
 class ApproxKNN:
@@ -48,7 +52,7 @@ class ApproxKNN:
         self.set_query_params(self.__ef_search)
         return self
 
-    def kneighbors(self, data: np.ndarray, n_neighbors: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
+    def kneighbors(self, data: np.ndarray, n_neighbors: Optional[int] = None) -> KNNOutput:
         if self.__normalize:
             data = l2_norm(data, norm="l2", axis=1)
         num_neighbors = n_neighbors or self.__n_neighbors
@@ -58,7 +62,7 @@ class ApproxKNN:
         )
         distances = neigh_and_dist[:, 1, :]
         indexes = neigh_and_dist[:, 0, :].astype(np.int32)
-        return distances, indexes
+        return KNNOutput(distances=distances, indexes=indexes)
 
     def load(self, index_path: str) -> "ApproxKNN":
         self.__index.loadIndex(index_path, load_data=(self.__index_params["skip_optimized_index"] == 1))

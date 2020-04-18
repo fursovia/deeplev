@@ -32,15 +32,17 @@ def test_non_zero_distance():
     assert approx_dist > 0.0
 
 
-def test_embedder_predictor():
+def test_embedder_predictor_output_shape():
     sequence = "qwerty"
     model = get_deep_levenshtein(vocab=Vocabulary(counter=_get_dummy_counter([sequence])))
     predictor = EmbedderPredictor(model=model)
     embedding = predictor.get_embeddings(sequences=[sequence])
+    embeddings = predictor.get_embeddings(sequences=[sequence, sequence])
     assert embedding.shape == (1, 64)
+    assert embeddings.shape == (2, 64)
 
 
-def test_search_predictor():
+def test_search_predictor_right_top1():
     sequences = ["asd", "sdf", "dfg"]
 
     model = get_deep_levenshtein(vocab=Vocabulary(counter=_get_dummy_counter(sequences)))
