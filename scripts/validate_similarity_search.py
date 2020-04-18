@@ -1,9 +1,17 @@
 import argparse
+from pathlib import Path
 from collections import defaultdict
+import json
 
 import pandas as pd
+from allennlp.data import Vocabulary
+from allennlp.common import Params
+
 from deeplev.utils import pairwise_edit_distances
 from deeplev.predictors import SearchPredictor
+from deeplev.model import DeepLevenshtein
+from deeplev.utils import load_weights
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", type=str, required=True)
@@ -30,9 +38,17 @@ if __name__ == "__main__":
     sorted_indexes = distances.argsort(axis=1)
     y_true = database[sorted_indexes].tolist()
 
-    predictor = SearchPredictor.from_path(archive_path=args.serialization_dir)
+    # TODO: replace these 6+ lines with one `from_path`
+    # predictor = SearchPredictor.from_path(archive_path=args.serialization_dir)
+    serialization_dir = Path(args.serialization_dir)
+    vocab = Vocabulary.from_files(serialization_dir / "vocab")
+    config = json.load(open(serialization_dir / "args.json"))["config"]
+    model = DeepLevenshtein.from_params(params=Params.from_file(config), vocab=vocab)
+    load_weights(model, serialization_dir / "best.th")
+
+    predictor = SearchPredictor(model=model, num_neighbors=max(TOP_K_VALUES))
     predictor.fit(data=database)
-    y_pred = predictor.find_neighbors(data=queries, n_neighbors=max(TOP_K_VALUES))
+    y_pred = predictor.find_neighbors(data=queries)
 
     recall_at_k = defaultdict(float)
     for k in TOP_K_VALUES:
@@ -41,4 +57,5 @@ if __name__ == "__main__":
             p = p[:k]
             recall_at_k[k] += (sum(int(tt in p) for tt in t) / k) / args.samples
 
-    print(recall_at_k)
+    for k, recall in recall_at_k.items():
+        print(f"Recall@{k} = {recall:.3f}")
