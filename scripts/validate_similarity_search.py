@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--data_path", type=str, required=True)
 parser.add_argument("--serialization_dir", type=str, required=True)
 parser.add_argument("--col_name", type=str, required=True)
-parser.add_argument("--samples", type=int, default=1000)
+parser.add_argument("--samples", type=int, default=None)
 parser.add_argument("--n_jobs", type=int, default=5)
 
 
@@ -26,7 +26,8 @@ TOP_K_VALUES = [1, 3, 5, 10, 20, 30, 40, 50]
 if __name__ == "__main__":
     args = parser.parse_args()
     data = pd.read_csv(args.data_path)
-    num_samples = args.samples if args.samples < data.shape[0] else data.shape[0]
+    num_samples = args.samples or data.shape[0]
+    num_samples = num_samples if num_samples <= data.shape[0] else data.shape[0]
     samples = data.sample(n=num_samples, replace=False)
 
     database = data[args.col_name].values
