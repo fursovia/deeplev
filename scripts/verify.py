@@ -1,6 +1,4 @@
-"""
-Taken from https://github.com/allenai/allennlp/blob/master/scripts/verify.py
-"""
+"""Taken from https://github.com/allenai/allennlp/blob/master/scripts/verify.py."""
 
 import argparse
 import sys

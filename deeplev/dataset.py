@@ -7,17 +7,21 @@ from allennlp.data import Instance
 from allennlp.data.dataset_readers import DatasetReader
 from allennlp.data.fields import ArrayField, Field, TextField
 from allennlp.data.token_indexers import SingleIdTokenIndexer
-from allennlp.data.tokenizers import CharacterTokenizer
+from allennlp.data.tokenizers import CharacterTokenizer, Tokenizer
 
 
 def _get_default_indexer() -> SingleIdTokenIndexer:
     return SingleIdTokenIndexer(namespace="tokens")
 
 
+def sequence_to_textfield(sequence: str, tokenizer: Tokenizer) -> TextField:
+    return TextField(tokenizer.tokenize(sequence), {"tokens": _get_default_indexer()})
+
+
 class LevenshteinReader(DatasetReader):
     def __init__(self, lazy: bool = False):
         super().__init__(lazy)
-        self._tokenizer = CharacterTokenizer()
+        self.tokenizer = CharacterTokenizer()
 
     def _read(self, file_path):
         with open(cached_path(file_path), "r") as data_file:
@@ -30,10 +34,9 @@ class LevenshteinReader(DatasetReader):
                     yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1])
 
     def text_to_instance(self, sequence_a: str, sequence_b: str, distance: Optional[float] = None) -> Instance:
-        fields: Dict[str, Field] = dict()
-        fields["sequence_a"] = TextField(self._tokenizer.tokenize(sequence_a), {"tokens": _get_default_indexer()})
-
-        fields["sequence_b"] = TextField(self._tokenizer.tokenize(sequence_b), {"tokens": _get_default_indexer()})
+        fields: Dict[str, Field] = {}
+        fields["sequence_a"] = sequence_to_textfield(sequence=sequence_a, tokenizer=self.tokenizer)
+        fields["sequence_b"] = sequence_to_textfield(sequence=sequence_b, tokenizer=self.tokenizer)
 
         if distance is not None:
             # TODO: fix this hack

@@ -1,7 +1,8 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 import torch
-from allennlp.data import Vocabulary
+from allennlp.data.dataset import Batch
+from allennlp.data import Vocabulary, Instance
 from allennlp.models.model import Model
 from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder
 from allennlp.modules.seq2vec_encoders import Seq2VecEncoder
@@ -51,3 +52,10 @@ class DeepLevenshtein(Model):
             output_dict["loss"] = loss
 
         return output_dict
+
+    def instances_to_model_input(self, instances: List[Instance]) -> Dict[str, torch.Tensor]:
+        cuda_device = self._get_prediction_device()
+        dataset = Batch(instances)
+        dataset.index_instances(self.vocab)
+        model_input = util.move_to_device(dataset.as_tensor_dict(), cuda_device)
+        return model_input
