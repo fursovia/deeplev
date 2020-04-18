@@ -27,7 +27,7 @@ def test_zero_distance():
         params=Params.from_file(_DEFAULT_CONFIG_PATH), vocab=Vocabulary(counter=_get_dummy_counter([sequence]))
     )
     predictor = DistancePredictor(model=model)
-    approx_dist = predictor.edit_distance(sequence, sequence)
+    approx_dist = predictor.calculate_edit_distance(sequence, sequence)
     assert approx_dist == approx(0.0, abs=1e-5)
 
 
@@ -39,7 +39,7 @@ def test_non_zero_distance():
         vocab=Vocabulary(counter=_get_dummy_counter([sequence_a, sequence_b])),
     )
     predictor = DistancePredictor(model=model)
-    approx_dist = predictor.edit_distance(sequence_a, sequence_b)
+    approx_dist = predictor.calculate_edit_distance(sequence_a, sequence_b)
     assert approx_dist > 0.0
 
 
