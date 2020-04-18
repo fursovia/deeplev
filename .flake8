@@ -5,6 +5,12 @@ ignore =
     # these rules don't play well with black
     E203  # whitespace before :
     W503  # line break before binary operator
+    D100  # Missing docstring in public module
+    D101  # Missing docstring in public class
+    D102  # Missing docstring in public method
+    D103  # Missing docstring in public function
+    D104  # Missing docstring in public package
+    D107  # Missing docstring in __init__
 
 per-file-ignores =
     # __init__.py files are allowed to have unused imports and lines-too-long

@@ -8,14 +8,17 @@ from allennlp.common.util import dump_metrics
 from allennlp.data.iterators import BucketIterator
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.training.trainer import Trainer
-from deeplev.dataset import END_SYMBOL, START_SYMBOL, LevenshteinReader
-from deeplev.model import get_deep_levenshtein
+from allennlp.common import Params
+
+from deeplev.dataset import LevenshteinReader
+from deeplev.model import DeepLevenshtein
 from deeplev.utils import load_weights
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--cuda", type=int, default=-1, help="cuda device number")
-parser.add_argument("--model_dir", type=str, default="experiments", help="where to save checkpoints")
-parser.add_argument("--data_dir", type=str, default="data", help="where train.csv and test.csv are")
+parser.add_argument("--model_dir", type=str, required=True, help="where to save checkpoints")
+parser.add_argument("--data_dir", type=str, required=True, help="where train.csv and test.csv are")
+parser.add_argument("--config", type=str, default="model_config/bilstm.jsonnet")
 
 parser.add_argument("--num_epochs", type=int, default=30)
 parser.add_argument("--batch_size", type=int, default=1024)
@@ -42,9 +45,7 @@ if __name__ == "__main__":
     if args.resume:
         vocab = Vocabulary.from_files(model_dir / "vocab")
     else:
-        vocab = Vocabulary.from_instances(
-            chain(train_dataset, test_dataset), tokens_to_add={"tokens": [START_SYMBOL, END_SYMBOL]},
-        )
+        vocab = Vocabulary.from_instances(chain(train_dataset, test_dataset))
         vocab.save_to_files(model_dir / "vocab")
 
     iterator = BucketIterator(
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     )
     iterator.index_with(vocab)
 
-    model = get_deep_levenshtein(vocab)
+    model = DeepLevenshtein.from_params(params=Params.from_file(args.config), vocab=vocab)
     if args.resume:
         load_weights(model, model_dir / "best.th")
 

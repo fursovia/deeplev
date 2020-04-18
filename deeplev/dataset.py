@@ -3,7 +3,6 @@ from typing import Dict, Optional
 
 import numpy as np
 from allennlp.common.file_utils import cached_path
-from allennlp.common.util import END_SYMBOL, START_SYMBOL
 from allennlp.data import Instance
 from allennlp.data.dataset_readers import DatasetReader
 from allennlp.data.fields import ArrayField, Field, TextField
@@ -12,7 +11,7 @@ from allennlp.data.tokenizers import CharacterTokenizer, Tokenizer
 
 
 def _get_default_indexer() -> SingleIdTokenIndexer:
-    return SingleIdTokenIndexer(namespace="tokens", start_tokens=[START_SYMBOL], end_tokens=[END_SYMBOL])
+    return SingleIdTokenIndexer(namespace="tokens")
 
 
 def sequence_to_textfield(sequence: str, tokenizer: Tokenizer) -> TextField:
@@ -35,7 +34,7 @@ class LevenshteinReader(DatasetReader):
                     yield self.text_to_instance(sequence_a=row[0], sequence_b=row[1])
 
     def text_to_instance(self, sequence_a: str, sequence_b: str, distance: Optional[float] = None) -> Instance:
-        fields: Dict[str, Field] = dict()
+        fields: Dict[str, Field] = {}
         fields["sequence_a"] = sequence_to_textfield(sequence=sequence_a, tokenizer=self.tokenizer)
         fields["sequence_b"] = sequence_to_textfield(sequence=sequence_b, tokenizer=self.tokenizer)
 

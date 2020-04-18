@@ -27,5 +27,5 @@ class EmbedderPredictor(DeepLevenshteinPredictor):
     def get_embeddings(self, sequences: Sequence[str]) -> np.ndarray:
         embeddings = []
         for seq in sequences:
-            embeddings.extend(self.predict_json(inputs={"sequence": seq})["vector"])
+            embeddings.extend(self.predict_json(inputs={"sequence": seq}))
         return np.array(embeddings)
