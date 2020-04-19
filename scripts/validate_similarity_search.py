@@ -53,10 +53,10 @@ if __name__ == "__main__":
 
     recall_at_k = defaultdict(float)
     for k in TOP_K_VALUES:
-        for t, p in zip(y_true, y_pred):
-            t = t[:k]
-            p = p[:k]
-            recall_at_k[k] += (sum(int(tt in p) for tt in t) / k) / args.samples
+        for true_vals, pred_vals in zip(y_true, y_pred):
+            true_vals = true_vals[:k]
+            pred_vals = pred_vals[:k]
+            recall_at_k[k] += (sum(int(p in true_vals) for p in pred_vals) / k) / args.samples
 
     for k, recall in recall_at_k.items():
         print(f"Recall@{k} = {recall:.3f}")
