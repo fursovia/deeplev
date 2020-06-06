@@ -1,0 +1,2 @@
+{"sequence_a": "abc", "sequence_b": "abc", "distance": 0}
+{"sequence_a": "abc", "sequence_b": "abd", "distance": 1}
