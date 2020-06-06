@@ -1,6 +1,7 @@
 import functools
 from multiprocessing import Pool
-from typing import Sequence
+from typing import Sequence, Dict, Any, List, Callable, Tuple, Optional
+import jsonlines
 import re
 
 import Levenshtein as lvs
@@ -8,6 +9,8 @@ import torch
 import numpy as np
 from tqdm import tqdm
 from allennlp.models import Model
+
+from deeplev.modules.typo_generator import generate_default_typo
 
 
 def load_weights(model: Model, path: str, location: str = "cpu") -> None:
@@ -23,7 +26,7 @@ def clean_sequence(sequence: str) -> str:
 
 
 @functools.lru_cache(maxsize=500)
-def edit_distance(sequence_a: str, sequence_b: str) -> float:
+def edit_distance(sequence_a: str, sequence_b: str) -> int:
     return lvs.distance(sequence_a, sequence_b)
 
 
@@ -46,3 +49,49 @@ def pairwise_edit_distances(
             )
         )
     return np.array(distances)
+
+
+def load_jsonlines(path: str) -> List[Dict[str, Any]]:
+    data = []
+    with jsonlines.open(path, "r") as reader:
+        for items in reader:
+            data.append(items)
+    return data
+
+
+def write_jsonlines(data: Sequence[Dict[str, Any]], path: str) -> None:
+    with jsonlines.open(path, "w") as writer:
+        for ex in data:
+            writer.write(ex)
+
+
+def create_dataset(
+    sequences: Sequence[str],
+    cleaner: Callable[[str], str] = clean_sequence,
+    num_original: Optional[int] = None,
+    num_artificial: Optional[int] = None,
+) -> List[Tuple[str, str, int]]:
+    sequences = list(map(cleaner, sequences))
+    vocab = list(set("".join(sequences)))
+    num_original = num_original or len(sequences)
+    num_artificial = num_artificial or len(sequences)
+
+    dissimilar_examples = []
+    dissimilar_indexes = np.random.randint(0, len(sequences), size=(num_original, 2))
+    for id1, id2 in tqdm(dissimilar_indexes):
+        tr1 = sequences[id1]
+        tr2 = sequences[id2]
+        dist = edit_distance(tr1, tr2)
+        dissimilar_examples.append((tr1, tr2, dist))
+
+    similar_examples = []
+    similar_indexes = np.random.randint(0, len(sequences), size=num_artificial)
+    for idx in tqdm(similar_indexes):
+        tr1 = sequences[idx]
+        tr2 = generate_default_typo(tr1, vocab)
+        if tr1 != tr2:
+            dist = edit_distance(tr1, tr2)
+            similar_examples.append((tr1, tr2, dist))
+
+    examples = dissimilar_examples + similar_examples
+    return examples
