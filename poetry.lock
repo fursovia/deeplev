@@ -287,6 +287,17 @@ version = "0.15.1"
 
 [[package]]
 category = "main"
+description = "Library with helpers for the jsonlines file format"
+name = "jsonlines"
+optional = false
+python-versions = "*"
+version = "1.2.0"
+
+[package.dependencies]
+six = "*"
+
+[[package]]
+category = "main"
 description = "Python bindings for Jsonnet - The data templating language"
 marker = "sys_platform != \"win32\""
 name = "jsonnet"
@@ -855,7 +866,7 @@ python-versions = ">=3.6"
 version = "3.1.0"
 
 [metadata]
-content-hash = "80b26deffac74c32ac1c16c1bb6a6dc98fe86bf72d26d1267fffed05a6de4d32"
+content-hash = "b8c234c1725133d8e3f8c219ff37a9cc03cff5d3d191f9c520c6362f77ed34c2"
 python-versions = "^3.6.1"
 
 [metadata.hashes]
@@ -885,6 +896,7 @@ idna = ["7588d1c14ae4c77d74036e8c22ff447b26d0fde8f007354fd48a7814db15b7cb", "a06
 importlib-metadata = ["0505dd08068cfec00f53a74a0ad927676d7757da81b7436a6eefe4c7cf75c545", "15ec6c0fd909e893e3a08b3a7c76ecb149122fb14b7efe1199ddd4c7c57ea958"]
 jmespath = ["b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9", "cdf6525904cc597730141d61b36f2e4b8ecc257c420fa2f4549bac2c2d0cb72f"]
 joblib = ["61e49189c84b3c5d99a969d314853f4d1d263316cc694bec17548ebaa9c47b6e", "6825784ffda353cc8a1be573118085789e5b5d29401856b35b756645ab5aecb5"]
+jsonlines = ["0ebd5b0c3efe0d4b5018b320fb0ee1a7b680ab39f6eb853715859f818d386cc8", "43b8d5588a9d4862c8a4a49580e38e20ec595aee7ad6fe469b10fb83fbefde88"]
 jsonnet = ["4d6eff8c17e146dccd244eda45317577cd5e264ce8d5d0676f1f36afdc01307e"]
 jsonpickle = ["8919c166bac0574e3d74425c7559434062002d9dfc0ac2afa6dc746ba4a19439", "e8d4b7cd0bd6826001a74377df1079a76ad8bae0f909282de2554164c837c8ba"]
 mccabe = ["ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42", "dd8d182285a0fe56bace7f45b5e7d1a6ebcbf524e8f3bd87eb0f125271b8831f"]
