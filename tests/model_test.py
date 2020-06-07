@@ -38,5 +38,10 @@ class TestDeepLevenshtein:
         batch.index_instances(model.vocab)
         output_dict = model(**batch.as_tensor_dict())
 
-        assert set(list(output_dict.keys())) == {"edit_distance", "emb_sequence_a", "emb_sequence_b", "loss"}
+        assert set(output_dict.keys()) == {
+            "edit_distance",
+            "emb_sequence_a",
+            "emb_sequence_b",
+            "loss",
+        }
         assert output_dict["edit_distance"].shape[0] == 3

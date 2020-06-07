@@ -29,7 +29,7 @@ class LevenshteinReader(DatasetReader):
                 yield instance
 
     def text_to_instance(self, sequence_a: str, sequence_b: str, distance: Optional[float] = None) -> Instance:
-        fields: Dict[str, Field] = dict()
+        fields: Dict[str, Field] = {}
         fields["sequence_a"] = TextField(self.tokenizer.tokenize(sequence_a), self.token_indexers)
         fields["sequence_b"] = TextField(self.tokenizer.tokenize(sequence_b), self.token_indexers)
 

@@ -33,6 +33,7 @@ jobs:
       run: PYTHONPATH=. python scripts/verify.py --checks pytest
     - name: Check training
       run: |
+        export GPU_ID="-1"
         export TRAIN_DATA_PATH="./tests/fixtures/data/train.jsonl"
         export VALID_DATA_PATH="./tests/fixtures/data/valid.jsonl"
 
