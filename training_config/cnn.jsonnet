@@ -12,6 +12,7 @@
     "tokenizer": {
       "type": "character"
     },
+    "max_sequence_length": 512,
     "lazy": false
   },
   "train_data_path": std.extVar("TRAIN_DATA_PATH"),
@@ -38,7 +39,10 @@
     }
   },
   "data_loader": {
-    "batch_size": 64
+    "batch_sampler": {
+      "type": "bucket",
+      "batch_size" : 32
+    }
   },
   "trainer": {
     "num_epochs": 50,
