@@ -14,11 +14,11 @@ from deeplev.utils import load_weights
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_path", type=str, required=True)
-parser.add_argument("--serialization_dir", type=str, required=True)
-parser.add_argument("--col_name", type=str, required=True)
+parser.add_argument("--data-path", type=str, required=True)
+parser.add_argument("--serialization-dir", type=str, required=True)
+parser.add_argument("--col-name", type=str, required=True)
 parser.add_argument("--samples", type=int, default=None)
-parser.add_argument("--n_jobs", type=int, default=5)
+parser.add_argument("--n-jobs", type=int, default=5)
 
 
 TOP_K_VALUES = [1, 3, 5, 10, 20, 30, 40, 50]

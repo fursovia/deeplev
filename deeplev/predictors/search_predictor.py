@@ -1,20 +1,18 @@
-from typing import List, Callable, Sequence, Optional
+from typing import List, Sequence, Optional
 
 import numpy as np
 from allennlp.predictors.predictor import Predictor
+from allennlp.models import Model
+from allennlp.data import DatasetReader
 
-from deeplev.model import DeepLevenshtein
-from deeplev.utils import clean_sequence
-from deeplev.knn import ApproxKNN
+from deeplev.modules.knn import ApproxKNN
 from deeplev.predictors import EmbedderPredictor
 
 
 @Predictor.register("searcher")
 class SearchPredictor(EmbedderPredictor):
-    def __init__(
-        self, model: DeepLevenshtein, num_neighbors: int = 10, preprocessor: Callable[[str], str] = clean_sequence,
-    ) -> None:
-        super().__init__(model=model, preprocessor=preprocessor)
+    def __init__(self, model: Model, dataset_reader: DatasetReader, num_neighbors: int = 3) -> None:
+        super().__init__(model=model, dataset_reader=dataset_reader)
         self._num_neighbors = num_neighbors
         self._knn = ApproxKNN(n_neighbors=num_neighbors)
         self._data: np.ndarray = None

@@ -7,11 +7,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
-torch = "1.4.0"
-allennlp = "0.9.0"
+allennlp = "=1.0.0.rc5"
+allennlp-models = "=1.0.0.rc5"
 pandas = "^1.0"
 python-Levenshtein = "^0.12.0"
 nmslib = "^2.0"
+jsonlines = "^1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "5.3.1"

@@ -31,26 +31,12 @@ jobs:
         PYTHONPATH=. python scripts/verify.py --checks black
     - name: Test with pytest
       run: PYTHONPATH=. python scripts/verify.py --checks pytest
-    - name: Download test dataset
+    - name: Check training
       run: |
-        mkdir -p ./data/test
-        wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=15kc2hriGKkv1hDushTzYmpRD05AK6qLk' \
-          -O test_data.zip
-        unzip -qqo test_data.zip -d ./data/test
-    - name: Create dataset
-      run: |
-        PYTHONPATH=. python scripts/create_dataset.py \
-          --csv_path ./data/test/data.csv \
-          --col_name comment_text \
-          --output_dir ./data/test/ \
-          --num_dissimilar 100 \
-          --num_similar 100 \
-          --test_size 0.2
-    - name: Check pipeline
-      run: |
-        python train.py \
-          --model_dir ./experiment \
-          --data_dir ./data/test \
-          --num_epochs 2 \
-          --batch_size 64 \
-          --patience 1
+        export GPU_ID="-1"
+        export TRAIN_DATA_PATH="./tests/fixtures/data/train.jsonl"
+        export VALID_DATA_PATH="./tests/fixtures/data/valid.jsonl"
+
+        allennlp train ./training_config/cnn.jsonnet \
+            --serialization-dir ./logs/test \
+            --include-package deeplev
