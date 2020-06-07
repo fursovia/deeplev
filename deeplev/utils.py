@@ -1,6 +1,6 @@
 import functools
 from multiprocessing import Pool
-from typing import Sequence, Dict, Any, List, Callable, Tuple, Optional
+from typing import Sequence, Dict, Any, List, Callable, Union, Optional
 import jsonlines
 import re
 
@@ -70,7 +70,7 @@ def create_dataset(
     cleaner: Callable[[str], str] = clean_sequence,
     num_original: Optional[int] = None,
     num_artificial: Optional[int] = None,
-) -> List[Tuple[str, str, int]]:
+) -> List[Dict[str, Union[str, int]]]:
     sequences = list(map(cleaner, sequences))
     vocab = list(set("".join(sequences)))
     num_original = num_original or len(sequences)
@@ -79,19 +79,19 @@ def create_dataset(
     dissimilar_examples = []
     dissimilar_indexes = np.random.randint(0, len(sequences), size=(num_original, 2))
     for id1, id2 in tqdm(dissimilar_indexes):
-        tr1 = sequences[id1]
-        tr2 = sequences[id2]
-        dist = edit_distance(tr1, tr2)
-        dissimilar_examples.append((tr1, tr2, dist))
+        seq_a = sequences[id1]
+        seq_b = sequences[id2]
+        dist = edit_distance(seq_a, seq_b)
+        dissimilar_examples.append(dict(sequence_a=seq_a, sequence_b=seq_b, distance=dist))
 
     similar_examples = []
     similar_indexes = np.random.randint(0, len(sequences), size=num_artificial)
     for idx in tqdm(similar_indexes):
-        tr1 = sequences[idx]
-        tr2 = generate_default_typo(tr1, vocab)
-        if tr1 != tr2:
-            dist = edit_distance(tr1, tr2)
-            similar_examples.append((tr1, tr2, dist))
+        seq_a = sequences[idx]
+        seq_b = generate_default_typo(seq_a, vocab)
+        if seq_a != seq_b:
+            dist = edit_distance(seq_a, seq_b)
+            similar_examples.append(dict(sequence_a=seq_a, sequence_b=seq_b, distance=dist))
 
     examples = dissimilar_examples + similar_examples
     return examples

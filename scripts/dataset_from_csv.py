@@ -29,8 +29,7 @@ if __name__ == "__main__":
     sequences = data[args.col_name].astype(str).tolist()
 
     examples = create_dataset(sequences, num_original=args.num_original, num_artificial=args.num_artificial)
-    examples = pd.DataFrame(examples, columns=["sequence_a", "sequence_b", "distance"])
-
     train, valid = train_test_split(examples, test_size=args.test_size)
+
     write_jsonlines(train, train_path)
     write_jsonlines(valid, valid_path)
